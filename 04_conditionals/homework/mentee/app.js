@@ -28,6 +28,12 @@
 //   isExtraCredit  → false                  (boolean)
 //
 // Log: "Student: " + studentName
+let studentName = "Aaron"; //use let unless the calculator is not for specific student? use const if it for one student.
+const maxScore = 100; //maxscore is usually 100 unless specifically stated otherwise, since it fixed const is used.
+const passingScore = 60; //usually pass score is fixed before start of school term? so const is used here/
+let earnedScore = 73; //we use let since the score might dynamically change
+let isExtraCredit = false//same, we use let again since it might switch between true or false.
+
 
 // ----------------------------------------------------------
 // TASK 2 — Apply extra credit (operators)
@@ -40,6 +46,23 @@
 //   ELSE             → log: "No extra credit."
 //
 // Then log the final earnedScore.
+
+let extraCreditPoints = 5;
+
+function applyExtraCredit(creditBool){
+    if (isExtraCredit){
+    earnedScore += extraCreditPoints;
+    console.log(`Extra credit applied! New score: ${earnedScore}`);
+    }
+    else{
+        console.log(`No extra credit.`);
+    }
+}
+
+applyExtraCredit(isExtraCredit);
+console.log(`Final earned score is: ${earnedScore}`);
+isExtraCredit = true;
+applyExtraCredit(isExtraCredit);
 
 // ----------------------------------------------------------
 // TASK 3 — Calculate the percentage (operators)
@@ -61,12 +84,64 @@
 //
 // ⚠️ Think carefully about the order. Why must 90 come before 80?
 
+const percentage = (earnedScore/maxScore) * 100;
+
+function rightorder(percentage){
+    if (percentage >= 90) {
+    console.log("Grade: A 🌟");
+    } else if (percentage >= 80) {
+    console.log("Grade: B ✅");
+    } else if (percentage >= 70) {
+    console.log("Grade: C 📘");
+    } else if (percentage >= 60) {
+    console.log("Grade: D ⚠️");
+    } else {
+    console.log("Grade: F ❌");
+    }
+}
+
+
+function wrongorder(percentage){
+    if (percentage >= 80) {
+    console.log("Grade: B ✅");
+    }else if (percentage >= 90) {
+    console.log("Grade: A 🌟");
+    } 
+    else if (percentage >= 70) {
+    console.log("Grade: C 📘");
+    } else if (percentage >= 60) {
+    console.log("Grade: D ⚠️");
+    } else {
+    console.log("Grade: F ❌");
+    }
+}
+
+
+console.log(rightorder(percentage));
+
+//// ⚠️ Think carefully about the order. Why must 90 come before 80?
+//order matters if you were to put 80 conditional check before 90. etc let say the score is 91.
+//then 80 conditional will be triggered since it fulfil the 80 conditional first before the 90 conditonal.percentage = 91
+
+percentagetest = 91;
+console.log(`Actual correct grade: ${rightorder(percentagetest)}`);
+console.log(`Wrong grade assigned (80 before 90 check): ${wrongorder(percentagetest)}`);
+
+
 // ----------------------------------------------------------
 // TASK 5 — Pass or fail (if/else + operators)
 // ----------------------------------------------------------
 // Write an if/else using earnedScore and passingScore:
 //   IF earnedScore >= passingScore → log studentName + " — PASSED ✅"
 //   ELSE                          → log studentName + " — FAILED ❌"
+
+
+if (earnedScore >= passingScore){
+    console.log(studentName + " — PASSED ✅"); //triggered since above 60 passing
+}
+else{
+    console.log(studentName + " — FAILED ❌");
+}
 
 // ----------------------------------------------------------
 // TASK 6 — Attendance check (logical operators)
@@ -83,6 +158,18 @@
 //     log "✅ Eligible for final grade."
 //   ELSE:
 //     log "🚫 Not eligible. Score: " + earnedScore + " | Attendance: " + attendancePercent + "%"
+ 
+const attendancePercent = 72;
+
+const minAttendance     = 75;
+
+if (earnedScore >= passingScore && attendancePercent  >= minAttendance){
+    console.log("✅ Eligible for final grade.");
+}
+else{
+    console.log("🚫 Not eligible. Score: " + earnedScore + " | Attendance: " + attendancePercent + "%");
+}
+
 
 // ----------------------------------------------------------
 // TASK 7 — Honor roll check (logical operators + !)
@@ -100,6 +187,17 @@
 //   ELSE:
 //     log studentName + " did not qualify for Honor Roll."
 
+ const honorRollThreshold = 90;
+ const hasDisciplinaryNote = false;
+
+ if (percentage >= honorRollThreshold && !hasDisciplinaryNote){
+    console.log(studentName + " has made the Honor Roll! 🏆"); //trigged since false for honordisciplinary
+ }
+ else{
+    console.log(studentName + " did not qualify for Honor Roll.");
+ }
+
+
 // ----------------------------------------------------------
 // TASK 8 — Connect the dots summary
 // ----------------------------------------------------------
@@ -114,6 +212,16 @@
 //
 // 💡 Math.abs() removes the negative sign from a number.
 //    e.g. Math.abs(-7) → 7
+
+const pointsNeededToPass = passingScore - earnedScore
+
+if (earnedScore >= passingScore){
+    console.log(studentName + " passed with " + earnedScore + " points.");
+}
+else{
+    console.log(studentName + " needs " + Math.abs(pointsNeededToPass) + " more points to pass.");
+}
+
 
 // ----------------------------------------------------------
 // ⭐ STRETCH GOAL — Subject breakdown
@@ -135,9 +243,27 @@
 //
 // Then write ONE more condition using ||:
 //   IF any single subject score is below 60:
-//     log "⚠️  Warning: at least one subject needs attention."
+//     log  Warning: at least one subject needs attention."
 //   ELSE:
 //     log "✅ All subjects are passing."
 //
 // Hint for the || condition:
 //   mathScore < 60 || scienceScore < 60 || englishScore < 60
+
+
+  let mathScore    = 88;
+  let scienceScore = 74;
+  let englishScore = 91;
+
+  const totalPoints  = mathScore + scienceScore + englishScore
+  const subjectCount = 3
+  const average      = totalPoints / subjectCount
+ 
+  console.log(`Average score: ${average}`);
+
+  if (mathScore  <= 60 || scienceScore <= 60 || englishScore <= 60){
+    console.log("Warning: at least one subject needs attention.");
+  }
+  else{
+    console.log("✅ All subjects are passing.");
+  }
