@@ -28,15 +28,12 @@
 //   isExtraCredit  → false                  (boolean)
 //
 // Log: "Student: " + studentName
-<<<<<<< HEAD
 let studentName = "Aaron"; //use let unless the calculator is not for specific student? use const if it for one student.
 const maxScore = 100; //maxscore is usually 100 unless specifically stated otherwise, since it fixed const is used.
 const passingScore = 60; //usually pass score is fixed before start of school term? so const is used here/
 let earnedScore = 73; //we use let since the score might dynamically change
 let isExtraCredit = false//same, we use let again since it might switch between true or false.
 
-=======
->>>>>>> 57fc42014d70e3bbc9f7f7ea3624eed5d1c3a864
 
 // ----------------------------------------------------------
 // TASK 2 — Apply extra credit (operators)
@@ -50,7 +47,6 @@ let isExtraCredit = false//same, we use let again since it might switch between 
 //
 // Then log the final earnedScore.
 
-<<<<<<< HEAD
 let extraCreditPoints = 5;
 
 function applyExtraCredit(creditBool){
@@ -68,8 +64,6 @@ console.log(`Final earned score is: ${earnedScore}`);
 isExtraCredit = true;
 applyExtraCredit(isExtraCredit);
 
-=======
->>>>>>> 57fc42014d70e3bbc9f7f7ea3624eed5d1c3a864
 // ----------------------------------------------------------
 // TASK 3 — Calculate the percentage (operators)
 // ----------------------------------------------------------
@@ -90,7 +84,6 @@ applyExtraCredit(isExtraCredit);
 //
 // ⚠️ Think carefully about the order. Why must 90 come before 80?
 
-<<<<<<< HEAD
 const percentage = (earnedScore/maxScore) * 100;
 
 function rightorder(percentage){
@@ -135,8 +128,6 @@ console.log(`Actual correct grade: ${rightorder(percentagetest)}`);
 console.log(`Wrong grade assigned (80 before 90 check): ${wrongorder(percentagetest)}`);
 
 
-=======
->>>>>>> 57fc42014d70e3bbc9f7f7ea3624eed5d1c3a864
 // ----------------------------------------------------------
 // TASK 5 — Pass or fail (if/else + operators)
 // ----------------------------------------------------------
@@ -144,7 +135,6 @@ console.log(`Wrong grade assigned (80 before 90 check): ${wrongorder(percentaget
 //   IF earnedScore >= passingScore → log studentName + " — PASSED ✅"
 //   ELSE                          → log studentName + " — FAILED ❌"
 
-<<<<<<< HEAD
 
 if (earnedScore >= passingScore){
     console.log(studentName + " — PASSED ✅"); //triggered since above 60 passing
@@ -153,8 +143,6 @@ else{
     console.log(studentName + " — FAILED ❌");
 }
 
-=======
->>>>>>> 57fc42014d70e3bbc9f7f7ea3624eed5d1c3a864
 // ----------------------------------------------------------
 // TASK 6 — Attendance check (logical operators)
 // ----------------------------------------------------------
@@ -170,7 +158,6 @@ else{
 //     log "✅ Eligible for final grade."
 //   ELSE:
 //     log "🚫 Not eligible. Score: " + earnedScore + " | Attendance: " + attendancePercent + "%"
-<<<<<<< HEAD
  
 const attendancePercent = 72;
 
@@ -183,8 +170,6 @@ else{
     console.log("🚫 Not eligible. Score: " + earnedScore + " | Attendance: " + attendancePercent + "%");
 }
 
-=======
->>>>>>> 57fc42014d70e3bbc9f7f7ea3624eed5d1c3a864
 
 // ----------------------------------------------------------
 // TASK 7 — Honor roll check (logical operators + !)
@@ -202,7 +187,6 @@ else{
 //   ELSE:
 //     log studentName + " did not qualify for Honor Roll."
 
-<<<<<<< HEAD
  const honorRollThreshold = 90;
  const hasDisciplinaryNote = false;
 
@@ -214,8 +198,6 @@ else{
  }
 
 
-=======
->>>>>>> 57fc42014d70e3bbc9f7f7ea3624eed5d1c3a864
 // ----------------------------------------------------------
 // TASK 8 — Connect the dots summary
 // ----------------------------------------------------------
@@ -231,7 +213,6 @@ else{
 // 💡 Math.abs() removes the negative sign from a number.
 //    e.g. Math.abs(-7) → 7
 
-<<<<<<< HEAD
 const pointsNeededToPass = passingScore - earnedScore
 
 if (earnedScore >= passingScore){
@@ -242,8 +223,6 @@ else{
 }
 
 
-=======
->>>>>>> 57fc42014d70e3bbc9f7f7ea3624eed5d1c3a864
 // ----------------------------------------------------------
 // ⭐ STRETCH GOAL — Subject breakdown
 // ----------------------------------------------------------
@@ -264,17 +243,12 @@ else{
 //
 // Then write ONE more condition using ||:
 //   IF any single subject score is below 60:
-<<<<<<< HEAD
 //     log  Warning: at least one subject needs attention."
-=======
-//     log "⚠️  Warning: at least one subject needs attention."
->>>>>>> 57fc42014d70e3bbc9f7f7ea3624eed5d1c3a864
 //   ELSE:
 //     log "✅ All subjects are passing."
 //
 // Hint for the || condition:
 //   mathScore < 60 || scienceScore < 60 || englishScore < 60
-<<<<<<< HEAD
 
 
   let mathScore    = 88;
@@ -293,5 +267,3 @@ else{
   else{
     console.log("✅ All subjects are passing.");
   }
-=======
->>>>>>> 57fc42014d70e3bbc9f7f7ea3624eed5d1c3a864
