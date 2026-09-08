@@ -130,7 +130,6 @@ for (const score of studentScores){
     }
 }
 
-
 const classAverage = totalScore / studentScores.length;
 console.log("📊 Class Stats:");
 console.log( "Highest score: " + highScore);

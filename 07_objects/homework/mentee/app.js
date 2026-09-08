@@ -40,6 +40,58 @@
 //
 // Log: "📦 Inventory loaded: " + inventory.length + " products"
 
+const inventory = [
+    {
+    id: 1,
+    name: "Guitar",
+    category: "Electronics",
+    price: 5,
+    stock: 0,
+    },
+     {
+    id: 2,
+    name: "Baguette",
+    category: "Food",
+    price: 10,
+    stock: 3,
+    },
+     {
+    id: 3,
+    name: "How to perform well",
+    category: "Books",
+    price: 25,
+    stock: 2,
+    },
+     {
+    id: 4,
+    name: "Pair of jeans",
+    category: "Clothing",
+    price: 70,
+    stock: 3,
+    },
+     {
+    id: 5,
+    name: "RTX 5090 Graphic Card",
+    category: "Electronics",
+    price: 210,
+    stock: 1,
+    },
+
+]
+
+for (let i = 0; i < inventory.length; i++){
+    if (inventory[i].stock > 0){
+        inventory[i].isAvailable = true;
+    }
+    else{
+        inventory[i].isAvailable = false;
+    }
+}
+
+console.log("📦 Inventory loaded: " + inventory.length + " products");
+
+
+
 // ----------------------------------------------------------
 // TASK 2 — Display all products
 // ----------------------------------------------------------
@@ -50,6 +102,14 @@
 //   + " | $" + inventory[i].price
 //   + " | Stock: " + inventory[i].stock
 //   + " | " + (inventory[i].isAvailable ? "✅ Available" : "❌ Out of stock")
+
+
+for (let i = 0; i < 5; i++){
+
+    console.log(`# ${inventory[i]. id} ${inventory[i].name} | $${inventory[i].price} |  Stock: ${inventory[i].stock} | ${inventory[i].isAvailable ? "✅ Available" : "❌ Out of stock"}`);
+}
+
+
 
 // ----------------------------------------------------------
 // TASK 3 — Calculate inventory stats
@@ -74,6 +134,22 @@
 //   "❌ Out of stock: "          + outOfStockCount + " product(s)"
 //   "⚠️  Low stock: "             + lowStockCount   + " product(s)"
 
+  let totalValue = 0;
+  let totalItems = 0;   
+  let outOfStockCount = 0;
+  let lowStockCount = 0;   
+
+const lowStockThreshold = 5;
+
+for (let i = 0; i < inventory.length; i++){
+    totalValue += inventory[i].price * inventory[i].stock;
+    totalItems += inventory[i].stock;
+    outOfStockCount = (inventory[i].stock === 0) ? (outOfStockCount + 1) : outOfStockCount;
+    lowStockCount = (inventory[i].stock < lowStockThreshold) ? (lowStockCount + 1) : lowStockCount;
+}
+
+console.log(`💰 Total inventory value: $${totalValue} | 📦 Total items in stock: ${totalItems} |  ❌ Out of stock: ${outOfStockCount} products(s) | ⚠️  Low stock: ${lowStockCount} product(s)`);
+
 // ----------------------------------------------------------
 // TASK 4 — Find products by category
 // ----------------------------------------------------------
@@ -87,6 +163,20 @@
 //
 // After the loop:
 //   Log: "Found " + found + " product(s) in " + searchCategory
+
+
+const searchCategory = "Electronics";
+let found = 0;
+
+for (let i = 0; i< inventory.length; i++){
+    if (inventory[i].category === searchCategory){
+        console.log(`increment and category found`);
+        found += 1;
+        console.log(`🔍 ${inventory[i].name}  — $ ${inventory[i].price}`);
+    }
+}
+
+console.log(`Found ${found} product(s) in ${searchCategory}`);
 
 // ----------------------------------------------------------
 // TASK 5 — Apply a sale discount
@@ -105,6 +195,25 @@
 // After the loop, log the full inventory array to see updated prices.
 
 // ----------------------------------------------------------
+
+const discountRate = 0.15;
+
+for (let i = 0; i < inventory.length; i++){
+    if (inventory[i].category === "Electronics"){
+            const discountAmount = inventory[i].price * discountRate;
+            inventory[i].price -= discountAmount;
+            inventory[i].price = inventory[i].price.toFixed(2);
+            inventory[i].price = Math.round(inventory[i].price * 100) / 100;
+            console.log(`🏷️ ${inventory[i].name} discounted to $${inventory[i].price}`);
+    }
+}
+
+for (let i = 0; i < inventory.length; i++){
+    if(inventory[i].category === searchCategory){
+        console.log(`$${inventory[i].price}`);
+    }
+}
+
 // TASK 6 — Restock low inventory
 // ----------------------------------------------------------
 // Any product with stock < 5 (but not 0) needs a restock of 20 units.
@@ -118,6 +227,18 @@
 //   ELSE IF stock < 5:
 //     - Add 20 to inventory[i].stock
 //     - Log: "📦 Restock: " + inventory[i].name + " → " + inventory[i].stock + " units"
+
+for (let i = 0; i < inventory.length;i++){
+    if (inventory[i].stock === 0){
+        inventory[i].stock += 50;
+        inventory[i].isAvailable = true;    
+        console.log( `🚚 Emergency restock: ${inventory[i].name} → ${inventory[i].stock} units`);
+    }
+    else{
+        inventory[i].stock += 20;
+        console.log(`📦 Restock: ${inventory[i].name} → ${inventory[i].stock} units`);
+    }   
+}
 
 // ----------------------------------------------------------
 // TASK 7 — Access nested data
@@ -134,6 +255,12 @@
 //   inventory[i].name + " supplied by " + inventory[i].supplier.name
 //   + " (" + inventory[i].supplier.country + ")"
 
+for (let i = 0; i < inventory.length;i++){
+    inventory[i].supplier = {name: `company${i}`, country: `country${i}`};
+}
+
+console.log(inventory);
+
 // ----------------------------------------------------------
 // TASK 8 — Connect the dots: most valuable product
 // ----------------------------------------------------------
@@ -148,10 +275,25 @@
 //   IF currentValue > topValue → update topValueIndex to i
 //
 // After the loop:
-//   const top = inventory[topValueIndex]
-//   Log: "🏆 Most valuable: " + top.name
-//        + " | $" + top.price + " × " + top.stock
-//        + " units = $" + (top.price * top.stock)
+//   const topProduct = inventory[topValueIndex] 
+//   Log: "🏆 Most valuable: " + topProduct.name
+//        + " | $" + topProduct.price + " × " + topProduct.stock
+//        + " units = $" + (topProduct.price * topProduct.stock)
+
+let topValueIndex = 0;
+
+for (let i = 0; i < inventory.length; i++){
+    let currentValue = inventory[i].price * inventory[i].stock;
+    let topValue = inventory[topValueIndex].price * inventory[topValueIndex].stock;
+
+    if(currentValue > topValue){
+        topValueIndex = i;
+    }
+}
+
+const topProduct = inventory[topValueIndex];
+
+console.log(`🏆 Most valuable: ${topProduct.name} | $${topProduct.price} × ${topProduct.stock} units = ${topProduct.price * topProduct.stock}`);
 
 // ----------------------------------------------------------
 // ⭐ STRETCH GOAL — Category summary report
@@ -176,3 +318,20 @@
 //
 // Hint: declare count, stock, value inside the OUTER loop
 // so they reset automatically on each category iteration.
+
+
+const categories = ["Electronics", "Clothing", "Food", "Books"];
+
+for (const category of categories){
+    let seperateCategoryProducts  = 0;
+    let totalStock = 0;
+    let totalValue = 0;
+    for (let i = 0; i < inventory.length;i++){
+        if (inventory[i].category == category){
+            seperateCategoryProducts += 1;
+            totalStock += inventory[i].stock;
+            totalValue += (inventory[i].price * inventory[i].stock);
+        }
+    }
+    console.log(`Category: ${category} | Products: ${seperateCategoryProducts} | Total stock: ${totalStock} | Category value: $${totalValue}`);
+}
