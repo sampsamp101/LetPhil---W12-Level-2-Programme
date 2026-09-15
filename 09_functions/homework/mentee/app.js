@@ -346,6 +346,10 @@ console.log(searchUsers(users, "email.com", "email"));
 
 console.log(searchUsers(users, "a"));
 
+//
+// Write a comment: why must you use u[field] instead of u.field
+//According to javascript, we should use .field if we only know what specific property that we want to extract. in this case, the question wants dynamic field variable instead, so square notation allows dynamic any names with spaces, symbol etc.
+
 
 // searchUsers(users, "dev")               → alexdev, liamdev
 // searchUsers(users, "email.com","email") → all with email addresses
