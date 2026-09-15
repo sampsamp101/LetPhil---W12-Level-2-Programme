@@ -16,18 +16,14 @@ const prices = [29.99, 49.99, 14.99, 99.99];
 
 const withTax = prices.map(function(price) {
   const taxed = price * 1.10;
-<<<<<<< HEAD
 
   return taxed;
-=======
->>>>>>> upstream/main
   console.log(taxed);
 });
 
 console.log("With tax:", withTax);
 
 // What's wrong ↓
-<<<<<<< HEAD
 // const prices = [29.99, 49.99, 14.99, 99.99];
 
 // const withTax = prices.map(function(price) {
@@ -38,10 +34,6 @@ console.log("With tax:", withTax);
 // });
 // Your fix ↓
 // just add in return taxed. done on the above.
-=======
-
-// Your fix ↓
->>>>>>> upstream/main
 
 
 // ----------------------------------------------------------
@@ -58,27 +50,17 @@ const orders = [
 ];
 
 const pending = orders.filter(function(order) {
-<<<<<<< HEAD
   return order.status === "pending";
-=======
-  return order.status = "pending";
->>>>>>> upstream/main
 });
 
 console.log(pending);
 
 // What's wrong ↓
-<<<<<<< HEAD
 // you did not return order.status === "pending"
 
 
 // Your fix ↓
 // return order.status === "pending"; corrected above
-=======
-
-// Your fix ↓
-
->>>>>>> upstream/main
 
 // ----------------------------------------------------------
 // 🔴 DEBUG 3 — Hard
@@ -94,32 +76,19 @@ const lineItems = [
 ];
 
 const orderTotal = lineItems.reduce(function(acc, item) {
-<<<<<<< HEAD
   return acc + (item.quantity * item.price);
 }, 0);
-=======
-  return acc + item.quantity * item.price;
-});
->>>>>>> upstream/main
 
 console.log("Order total: $" + orderTotal);
 
 // Bug 1 ↓
-<<<<<<< HEAD
 // missing initial value for acc (done above.)
-=======
->>>>>>> upstream/main
 
 // Bug 2 ↓
 // Hint: run it and read the output carefully.
 // What is the value on the first iteration?
-<<<<<<< HEAD
 //for bug 2, missing initial val as well? without 0 as initial value, javascript will mistaken as you are trying to add acc as an object adding together with number instead. 
 
 // Your fix ↓
 
 
-=======
-
-// Your fix ↓
->>>>>>> upstream/main
