@@ -119,6 +119,11 @@ const total = prices.reduce(function (acc, price) {
 }, 0);
 ```
 
+const prices = [2, 4, 6, 8, 10];
+
+0 + 2 = 2
+2 + 4 = 6
+
 The accumulator (`acc`) carries the running result. Always provide the **initial value** as the second argument — without it, `acc` starts as the first element, which causes bugs when working with objects.
 
 ---
