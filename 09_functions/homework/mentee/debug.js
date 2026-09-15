@@ -8,17 +8,26 @@
 // This arrow function should return the full name
 // but always returns undefined. What's wrong?
 
-const getFullName = (first, last) => {
-  first + " " + last;
-};
+// const getFullName = (first, last) => {
+//   first + " " + last;
+// };
 
-console.log(getFullName("Alex", "Rivera"));
+// console.log(getFullName("Alex", "Rivera"));
 
 // What's wrong ↓
 
 // Your fix — write TWO versions:
 //   a) Fix by adding return inside the braces
+
+const getFullName = (first, last) => {
+  return `${first} ${last}`;
+};
+
 //   b) Fix by removing the braces (one-liner implicit return)
+
+getFullName = (first, last) => (`${first} ${last}`);
+
+console.log(getFullName("Alex", "Rivera"));
 
 // ----------------------------------------------------------
 // 🟡 DEBUG 2 — Medium
@@ -27,27 +36,48 @@ console.log(getFullName("Alex", "Rivera"));
 // depending on role. It works for "admin" but returns
 // undefined for everything else. What's wrong?
 
-function getRoleLabel(role) {
-  if (role === "admin") {
-    return "Admin";
-  } else if (role === "mod") {
-    ("Moderator");
-  } else {
-    ("Member");
-  }
-}
+// function getRoleLabel(role) {
+//   if (role === "admin") {
+//     return "Admin";
+//   } else if (role === "mod") {
+//     ("Moderator");
+//   } else {
+//     ("Member");
+//   }
+// }
 
-console.log(getRoleLabel("admin")); // "Admin" ✅
-console.log(getRoleLabel("mod")); // undefined ❌
-console.log(getRoleLabel("member")); // undefined ❌
+// console.log(getRoleLabel("admin")); // "Admin" ✅
+// console.log(getRoleLabel("mod")); // undefined ❌
+// console.log(getRoleLabel("member")); // undefined ❌
 
 // What's wrong ↓
 
 // Your fix ↓
+function getRoleLabel(role) {
+  if (role === "admin") {
+    return "Admin";
+  } else if (role === "mod") {
+    return "Mod";
+  } else {
+    return "Member";
+  }
+}
+console.log(getRoleLabel("admin")); 
+
+console.log(getRoleLabel("mod")); 
+
+console.log(getRoleLabel("member"));
 
 // Bonus: rewrite the whole function as an arrow function
+
 // using nested ternaries (just to see what it looks like —
 // then write a comment about whether you'd actually use it).
+
+
+console.log(getRoleLabel("admin")); 
+console.log(getRoleLabel("mod")); 
+console.log(getRoleLabel("member"));
+
 
 // ----------------------------------------------------------
 // 🔴 DEBUG 3 — Hard
