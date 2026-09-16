@@ -60,6 +60,12 @@ const profile = {
 // Store selections in const variables — the element itself
 // won't change, only what's inside it.
 
+
+const first = document.getElementById("id");
+const second = document.querySelector("selector");
+const third = document.querySelectorAll("selector");
+
+
 // TASK 1
 // Declare a function called selectElements.
 // Inside, select and log the following elements:
@@ -74,7 +80,21 @@ const profile = {
 
 function selectElements() {
   // your code here
+  const pageTitleSelect = document.getElementById("page-title");
+
+  const userNameSelect = document.getElementById("user-name");
+
+  const allStatsClassSelect = document.querySelectorAll(".stat");
+
+  console.log(pageTitleSelect, userNameSelect, allStatsClassSelect);
 }
+
+selectElements();
+
+// a) The <h1 id="page-title"> using getElementById - showing element h1#page-title
+//   b) The <h2 id="user-name"> using querySelector - showing h2#user-name
+//   c) All <div class="stat"> elements using querySelectorAll - showing all of nodelist 
+
 
 // ----------------------------------------------------------
 // PART 2 — CHANGING CONTENT
@@ -95,6 +115,7 @@ function selectElements() {
 //     comes from a user (form inputs, URL params, etc.)
 //     Use textContent for plain text. Always.
 
+
 // TASK 2
 // Declare a function called renderHeader.
 // Inside:
@@ -105,7 +126,12 @@ function selectElements() {
 
 function renderHeader() {
   // your code here
+    const pageTitleSelect = document.getElementById("page-title");
+
+    pageTitleSelect.textContent = `${profile.firstName}'s Dev Profile`;
 }
+
+renderHeader();
 
 // TASK 3
 // Declare a function called renderProfileCard.
@@ -121,7 +147,25 @@ function renderHeader() {
 
 function renderProfileCard() {
   // your code here
+
+  const avatarProfile = document.getElementById("avatar");
+
+  const userNameProfile = document.getElementById("user-name");
+
+  const userTitleProfile = document.getElementById("user-title");
+
+  const locationProfile = document.getElementById("user-location");
+
+  const userBioProfile = document.getElementById("user-bio");
+
+  avatarProfile.textContent = `${profile.firstName[0].toUpperCase()}${profile.lastName[0].toUpperCase()}`;
+  userNameProfile.textContent = `${profile.firstName} ${profile.lastName}`;
+  userTitleProfile.textContent = `${profile.title}`;
+  locationProfile.textContent = `${profile.location}`;
+  userBioProfile.textContent = `${profile.bio}`;
 }
+
+renderProfileCard();
 
 // ----------------------------------------------------------
 // PART 3 — CHANGING STYLES
@@ -161,10 +205,17 @@ function renderProfileCard() {
 
 function renderStatusBadge(status) {
   // your code here
+
+  const statusBadge = document.getElementById("status-badge");
+  
+  statusBadge.textContent = (status === "active") ? "🟢 Active" : (status === "away") ? "🟡 Away" : "🔴 Offline";
+  
+  statusBadge.classList.add(`${status}`);
 }
 
-// TASK 5
-// Declare a function called renderStats.
+renderStatusBadge(profile.status);
+
+// TASK 5// Declare a function called renderStats.
 // Inside:
 //   - Select #stat-projects, #stat-commits, #stat-reviews
 //   - Set each one's textContent to the matching value from profile.stats
@@ -173,8 +224,17 @@ function renderStatusBadge(status) {
 
 function renderStats() {
   // your code here
+
+    const statProjects = document.getElementById("stat-projects");
+    const statCommits = document.getElementById("stat-commits");
+    const statReview = document.getElementById("stat-reviews");
+    
+    statProjects.textContent = profile['stats'].projects;
+    statCommits.textContent = profile['stats'].commits;
+    statReview.textContent = profile['stats'].reviews;
 }
 
+renderStats();
 // TASK 6 — classList.toggle (dark mode preview)
 // Declare a function called toggleDarkMode.
 // Inside:
@@ -191,7 +251,15 @@ function renderStats() {
 
 function toggleDarkMode() {
   // your code here
+    document.body.classList.toggle("dark");
+    console.log(`Dark mode: ${document.body.classList.contains("dark")}`);
 }
+
+toggleDarkMode();
+toggleDarkMode();
+//toggle allows you to directly toggle the class on/off directly instead of manually calling it remove/add to enable on off of the features.
+//in reallife/realtime apps we want to utilize toggle if possible. since it automatic state tracking. if you were to use add/remove you will need useState boolean/setBoolean to utilize it.
+
 
 // ----------------------------------------------------------
 // PART 4 — CREATING AND INSERTING ELEMENTS
@@ -216,6 +284,15 @@ function toggleDarkMode() {
 //   el.remove()
 //   → removes the element from the DOM entirely
 
+const el = document.createElement("li");
+el.textContent = "Javascript";
+el.classList.add("skill-tag");
+
+const parent = document.getElementById("skills-block");
+// parent.appendChild(el);
+// parent.prepend(el);
+// el.remove();
+
 // TASK 7
 // Declare a function called renderSkills.
 // Parameter: skillsArray
@@ -232,7 +309,16 @@ function toggleDarkMode() {
 
 function renderSkills(skillsArray) {
   // your code here
+  const skillsListSelecUl = document.getElementById("skills-list");
+
+  skillsArray.forEach((skill)=>{
+      const newli = document.createElement('li');
+      newli.textContent = `${skill}`;
+      skillsListSelecUl.appendChild(newli);
+  })
 }
+
+renderSkills(profile.skills);
 
 // TASK 8
 // Declare a function called addSkill.
@@ -248,7 +334,16 @@ function renderSkills(skillsArray) {
 
 function addSkill(skillName) {
   // your code here
+
+  const newliEl = document.createElement('li');
+  newliEl.textContent = `${skillName}`;
+  const skillsListUl = document.getElementById("skills-list");
+
+  skillsListUl.appendChild(newliEl);
 }
+
+addSkill("TypeScript");
+addSkill("Docker");
 
 // ----------------------------------------------------------
 // PART 5 — CONNECT THE DOTS (all 10 lessons)
@@ -266,7 +361,16 @@ function addSkill(skillName) {
 
 function removeFirstSkill() {
   // your code here
+    const skillListSelect = document.getElementById('skills-list');
+    
+    skillListSelect.firstElementChild.remove();
+    console.log(`Removed skill. Skills remaining: ${skillListSelect.children.length}`);
 }
+
+removeFirstSkill();
+removeFirstSkill();
+removeFirstSkill();
+removeFirstSkill();
 
 // TASK 10 — Full render function (connect all parts)
 // Declare a function called renderProfile.
@@ -283,6 +387,11 @@ function removeFirstSkill() {
 
 function renderProfile() {
   // your code here
+  renderHeader();
+  renderProfileCard();
+  renderStatusBadge(profile.status);
+  renderStats();
+  renderSkills(profile.skills);
 }
 
 // ============================================================
@@ -293,3 +402,9 @@ function renderProfile() {
 // Then call addSkill() with a new skill name.
 // Then call removeFirstSkill() to test removal.
 // Then call selectElements() to inspect the DOM in the console.
+
+renderProfile();
+toggleDarkMode();
+addSkill("Power BI");
+removeFirstSkill();
+selectElements();

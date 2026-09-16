@@ -93,6 +93,10 @@ const boardName = "Sprint 12 — Task Board";
 
 function renderHeader(taskList) {
   // your code here
+  const boardTitleSelect = document.getElementById("board-title");
+  boardTitleSelect.textContent = `${boardName}`;
+  const taskCount = document.getElementById('task-count');
+  taskCount.textContent = `${taskList.length} tasks`;
 }
 
 // ----------------------------------------------------------
@@ -127,6 +131,35 @@ function renderHeader(taskList) {
 
 function createTaskCard(task) {
   // your code here
+
+  const liSelect = document.createElement("li");
+  liSelect.classList.add("task-card");
+  liSelect.dataset.id = task.id;
+  
+  const newPelement = document.createElement('p');
+  newPelement.classList.add("task-title");
+  newPelement.textContent = `${task.title}`;
+  
+  const newDivElement = document.createElement('div');
+
+  newDivElement.classList.add("task-meta");
+  
+  const newSpan1 = document.createElement('span');
+  newSpan1.textContent = `${task.priority.toUpperCase()}`;
+  newSpan1.classList.add(`priority-${task.priority}`);
+  
+  const newSpan2 = document.createElement('span');
+  newSpan2.textContent = `👤 ${task.assignee}`;
+
+  newDivElement.append(newSpan1, newSpan2);
+
+  liSelect.append(newPelement,newDivElement); 
+
+  if (task.status === "done"){
+    liSelect.classList.add("completed");
+  }
+
+  return liSelect;
 }
 
 // ----------------------------------------------------------
@@ -150,7 +183,24 @@ function createTaskCard(task) {
 
 function renderBoard(taskList) {
   // your code here
+  const listToDo = document.getElementById('list-todo');
+  const listInProgress = document.getElementById('list-inprogress'); 
+  const listDone = document.getElementById('list-done');
+  
+  taskList.forEach((task)=>{
+    const newLiRecord = createTaskCard(task);
+    if (task.status === "todo"){
+      listToDo.appendChild(newLiRecord);
+    }
+    else if(task.status === "inprogress"){
+      listInProgress.appendChild(newLiRecord);
+    }
+    else{
+      listDone.appendChild(newLiRecord);
+    }
+  });
 }
+
 
 // ----------------------------------------------------------
 // TASK 4 — updateCounts
@@ -171,6 +221,14 @@ function renderBoard(taskList) {
 
 function updateCounts(taskList) {
   // your code here
+  
+  const completedTasks = taskList.filter((task) => (task.status === "done"));
+  const pendingTasks = taskList.filter((task) => (task.status !== "done"));
+
+  const completedEl = document.getElementById("completed-count");
+  const pendingEl = document.getElementById("pending-count");
+  completedEl.textContent = `✅ ${completedTasks.length} done`;
+  pendingEl.textContent = `⏳ ${pendingTasks.length} pending`;
 }
 
 // ----------------------------------------------------------
@@ -192,6 +250,14 @@ function updateCounts(taskList) {
 
 function addRemoveButtons() {
   // your code here
+  const selectAllCards = document.querySelectorAll('.task-card');
+  
+  selectAllCards.forEach((card)=> {
+    const createButton = document.createElement(`button`);
+    createButton.classList.add('remove-btn');
+    createButton.textContent = "X";
+    card.appendChild(createButton);
+  })
 }
 
 // ----------------------------------------------------------
@@ -210,6 +276,12 @@ function addRemoveButtons() {
 
 function highlightHighPriority() {
   // your code here
+
+  const allHighPriority = document.querySelectorAll(".priority-high");
+  allHighPriority.forEach((highPriority)=>{
+    highPriority.style.fontWeight ="800";
+  }) 
+
 }
 
 // ----------------------------------------------------------
@@ -234,7 +306,29 @@ function highlightHighPriority() {
 
 function addNewTask(title, assignee, priority = "medium", status = "todo") {
   // your code here
+  const listToDo = document.getElementById('list-todo');
+  const listInProgress = document.getElementById('list-inprogress'); 
+  const listDone = document.getElementById('list-done');
+
+  const newTaskObj ={ id: Date.now(), title, assignee, priority, status };
+  tasks.push(newTaskObj);
+  const newCard = createTaskCard(newTaskObj);
+  if (status === "todo"){
+      listToDo.appendChild(newCard);
+  }
+  else if (status === "inprogress"){
+      listInProgress.appendChild(newCard);
+  }
+  else {
+      listDone.appendChild(newCard);
+  }
+
+  updateCounts(tasks);
+  addRemoveButtons();
+  highlightHighPriority();
 }
+
+
 
 // ----------------------------------------------------------
 // TASK 8 — Connect the dots: renderAll
@@ -254,7 +348,14 @@ function addNewTask(title, assignee, priority = "medium", status = "todo") {
 
 function renderAll() {
   // your code here
+  renderHeader(tasks);
+  renderBoard(tasks);
+  updateCounts(tasks);
+  addRemoveButtons();
+  highlightHighPriority();
 }
+
+
 
 // ----------------------------------------------------------
 // ⭐ STRETCH GOAL — markComplete
@@ -279,3 +380,28 @@ function renderAll() {
 // ============================================================
 // CALL YOUR FUNCTIONS HERE
 // ============================================================
+
+renderAll();
+addNewTask("Write unit tests", "Carlos", "high");
+
+function markComplete(taskId){
+
+  const taskMatched = tasks.find((task) => (task.id === taskId));
+  if (taskMatched){
+    taskMatched.status = "done";
+  }
+  const taskCard = document.querySelector(`[data-id='${taskId}']`);
+  const listDone = document.getElementById('list-done');
+  
+  if (taskCard){
+    taskCard.classList.add("completed");
+    listDone.append(taskCard);  
+  }
+
+  updateCounts(tasks);
+}
+
+markComplete(1);
+
+//dataset is to allow js(javascript)/tx(typescript) to uniquely identify a task to effectively perform action on it.
+//if there no custom dataset, js/tx would not have any idea to identify which tasks to remove or perform action since there is no distinct way to identify one specific task.
