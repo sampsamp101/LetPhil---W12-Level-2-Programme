@@ -48,7 +48,7 @@ const firstCard = document.querySelector(".card");
 
 // querySelectorAll — all matches, returns a NodeList
 const allStats = document.querySelectorAll(".stat");
-allStats.forEach(stat => console.log(stat));
+allStats.forEach((stat) => console.log(stat));
 ```
 
 Store selections in `const` — the element reference won't change, only its contents.
@@ -59,10 +59,21 @@ Store selections in `const` — the element reference won't change, only its con
 
 ```js
 // textContent — safe, treats everything as plain text
+
+<h1 id="heading">Hello User</h1>;
+const element = document.getElementById("heading"); // h1
+
 element.textContent = "Hello, Alex!";
 
 // innerHTML — renders actual HTML markup
+<div id="container"></div>;
+const element = document.getElementById("continaer"); // div
+
 element.innerHTML = "<strong>Bold text</strong>";
+
+<div id="container">
+  <strong>Bold text</strong>
+</div>;
 ```
 
 ⚠️ **Never use `innerHTML` with user-provided data.** An attacker can inject malicious scripts. `textContent` escapes everything — it's always safe for user-facing text.
@@ -79,8 +90,8 @@ element.style.fontSize = "1.5rem";
 // classList — add, remove, or toggle CSS class names
 element.classList.add("active");
 element.classList.remove("active");
-element.classList.toggle("dark");      // adds if absent, removes if present
-element.classList.contains("dark");    // true or false
+element.classList.toggle("dark"); // adds if absent, removes if present
+element.classList.contains("dark"); // true or false
 ```
 
 **Prefer `classList` over inline styles** for predefined states. Write the CSS once, let JS control which classes are active. Cleaner separation of concerns.
@@ -98,14 +109,21 @@ li.textContent = "JavaScript";
 li.classList.add("skill-tag");
 
 // 3. Insert
-parent.appendChild(li);   // adds as LAST child
-parent.prepend(li);        // adds as FIRST child
+parent.appendChild(li); // adds as LAST child
+element.innerHTML = "<strong>Bold text</strong>";
+
+parent.prepend(li); // adds as FIRST child
+parent.append(li);
 
 // Remove
-li.remove();               // removes from the DOM entirely
+li.remove(); // removes from the DOM entirely
 ```
 
 ---
+
+const unOrdered = document.getElemenbtId(unOrderedList")
+
+unOrdered.innerHTML += "<li>Shower</li>"
 
 ## 🌍 Real-World Usage
 
@@ -120,39 +138,46 @@ li.remove();               // removes from the DOM entirely
 ## ⚠️ Common Mistakes
 
 1. **`getElementById` with a `#` prefix**
+
    ```js
-   document.getElementById("#page-title")  // ❌ returns null
-   document.getElementById("page-title")   // ✅
+   document.getElementById("#page-title"); // ❌ returns null
+   document.getElementById("page-title"); // ✅
    ```
 
 2. **`innerHTML` with user data (XSS risk)**
+
    ```js
-   nameEl.innerHTML = userInput;     // ❌ dangerous
-   nameEl.textContent = userInput;   // ✅ safe
+   nameEl.innerHTML = userInput; // ❌ dangerous
+   nameEl.textContent = userInput; // ✅ safe
    ```
 
 3. **Forgetting to check for null before using an element**
+
    ```js
    const el = document.getElementById("missing-id"); // null
-   el.textContent = "Hi";  // ❌ TypeError: Cannot set properties of null
-   if (el) { el.textContent = "Hi"; }  // ✅
+   el.textContent = "Hi"; // ❌ TypeError: Cannot set properties of null
+   if (el) {
+     el.textContent = "Hi";
+   } // ✅
    ```
 
 4. **Wrong selector in querySelector**
+
    ```js
-   document.querySelector("skills-list")   // ❌ looks for a <skills-list> tag
-   document.querySelector("#skills-list")  // ✅ looks for id="skills-list"
-   document.querySelector(".skills-list")  // ✅ looks for class="skills-list"
+   document.querySelector("skills-list"); // ❌ looks for a <skills-list> tag
+   document.querySelector("#skills-list"); // ✅ looks for id="skills-list"
+   document.querySelector(".skills-list"); // ✅ looks for class="skills-list"
    ```
 
 5. **Using innerHTML in a loop (slow and risky)**
+
    ```js
    // ❌ re-parses entire innerHTML every iteration
    list.innerHTML += "<li>" + item + "</li>";
 
    // ✅ createElement + appendChild
-   const li = document.createElement("li");
-   li.textContent = item;
+   const textContentli = document.createElement("li");
+   li. = item;
    list.appendChild(li);
    ```
 
