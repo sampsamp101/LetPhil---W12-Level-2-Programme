@@ -79,22 +79,16 @@ const third = document.querySelectorAll("selector");
 // Call selectElements() at the bottom of the file.
 
 function selectElements() {
-  // your code here
-  const pageTitleSelect = document.getElementById("page-title");
+  const titleEl = document.getElementById("page-title");
+  const nameEl = document.querySelector("#user-name");
+  const statEls = document.querySelectorAll(".stat");
 
-  const userNameSelect = document.getElementById("user-name");
-
-  const allStatsClassSelect = document.querySelectorAll(".stat");
-
-  console.log(pageTitleSelect, userNameSelect, allStatsClassSelect);
+  console.log(titleEl);
+  console.log(nameEl);
+  console.log(statEls);
 }
 
 selectElements();
-
-// a) The <h1 id="page-title"> using getElementById - showing element h1#page-title
-//   b) The <h2 id="user-name"> using querySelector - showing h2#user-name
-//   c) All <div class="stat"> elements using querySelectorAll - showing all of nodelist 
-
 
 // ----------------------------------------------------------
 // PART 2 — CHANGING CONTENT
@@ -125,10 +119,9 @@ selectElements();
 // Call renderHeader() at the bottom.
 
 function renderHeader() {
-  // your code here
-    const pageTitleSelect = document.getElementById("page-title");
+  const pageEl = document.getElementById("page-title");
 
-    pageTitleSelect.textContent = `${profile.firstName}'s Dev Profile`;
+  pageEl.textContent = `${profile.firstName}'s Dev Profile`;
 }
 
 renderHeader();
@@ -146,23 +139,18 @@ renderHeader();
 // Call renderProfileCard() at the bottom.
 
 function renderProfileCard() {
-  // your code here
+  const avatarEl = document.getElementById("avatar");
+  const nameEl = document.getElementById("user-name");
+  const titleEl = document.getElementById("user-title");
+  const locationEl = document.getElementById("user-location");
+  const bioEl = document.getElementById("user-bio");
 
-  const avatarProfile = document.getElementById("avatar");
-
-  const userNameProfile = document.getElementById("user-name");
-
-  const userTitleProfile = document.getElementById("user-title");
-
-  const locationProfile = document.getElementById("user-location");
-
-  const userBioProfile = document.getElementById("user-bio");
-
-  avatarProfile.textContent = `${profile.firstName[0].toUpperCase()}${profile.lastName[0].toUpperCase()}`;
-  userNameProfile.textContent = `${profile.firstName} ${profile.lastName}`;
-  userTitleProfile.textContent = `${profile.title}`;
-  locationProfile.textContent = `${profile.location}`;
-  userBioProfile.textContent = `${profile.bio}`;
+  avatarEl.textContent =
+    profile.firstName[0].toUpperCase() + profile.lastName[0].toUpperCase();
+  nameEl.textContent = profile.firstName + " " + profile.lastName;
+  titleEl.textContent = profile.title;
+  locationEl.textContent = profile.location;
+  bioEl.textContent = profile.bio;
 }
 
 renderProfileCard();
@@ -204,18 +192,26 @@ renderProfileCard();
 // Call renderStatusBadge(profile.status) at the bottom.
 
 function renderStatusBadge(status) {
-  // your code here
-
   const statusBadge = document.getElementById("status-badge");
-  
-  statusBadge.textContent = (status === "active") ? "🟢 Active" : (status === "away") ? "🟡 Away" : "🔴 Offline";
-  
-  statusBadge.classList.add(`${status}`);
+  statusBadge.textContent =
+    status === "active" ? "🟢 Active" : status === "away" ? "Away" : "Offline";
+
+  // Removing prior classes
+  statusBadge.classList.remove("active", "away", "offline");
+
+  if (status === "active") {
+    statusBadge.classList.add("active");
+  } else if (status === "away") {
+    statusBadge.classList.add("away");
+  } else {
+    statusBadge.classList.add("offline");
+  }
 }
 
-renderStatusBadge(profile.status);
+// (<span class="badge active"></span>).badge.active.active;
 
-// TASK 5// Declare a function called renderStats.
+// TASK 5
+// Declare a function called renderStats.
 // Inside:
 //   - Select #stat-projects, #stat-commits, #stat-reviews
 //   - Set each one's textContent to the matching value from profile.stats
@@ -223,15 +219,12 @@ renderStatusBadge(profile.status);
 // Call renderStats() at the bottom.
 
 function renderStats() {
-  // your code here
+  document.getElementById("stat-projects").textContent = profile.stats.projects;
+  const commitsEl = document.getElementById("stat-commits");
+  const reviewsEl = document.getElementById("stat-reviews");
 
-    const statProjects = document.getElementById("stat-projects");
-    const statCommits = document.getElementById("stat-commits");
-    const statReview = document.getElementById("stat-reviews");
-    
-    statProjects.textContent = profile['stats'].projects;
-    statCommits.textContent = profile['stats'].commits;
-    statReview.textContent = profile['stats'].reviews;
+  commitsEl.textContent = profile.stats.commits;
+  reviewsEl.textContent = profile.stats.reviews;
 }
 
 renderStats();
@@ -250,16 +243,13 @@ renderStats();
 // from classList.add?
 
 function toggleDarkMode() {
-  // your code here
-    document.body.classList.toggle("dark");
-    console.log(`Dark mode: ${document.body.classList.contains("dark")}`);
+  const bodyElement = document.body;
+  bodyElement.classList.toggle("dark");
+  console.log("Dark mode: " + bodyElement.classList.contains("dark"));
 }
 
-toggleDarkMode();
-toggleDarkMode();
-//toggle allows you to directly toggle the class on/off directly instead of manually calling it remove/add to enable on off of the features.
-//in reallife/realtime apps we want to utilize toggle if possible. since it automatic state tracking. if you were to use add/remove you will need useState boolean/setBoolean to utilize it.
-
+// toggleDarkMode(); // turn on dark mode
+// toggleDarkMode(); // turn off dark mode
 
 // ----------------------------------------------------------
 // PART 4 — CREATING AND INSERTING ELEMENTS
@@ -308,14 +298,12 @@ const parent = document.getElementById("skills-block");
 // Call renderSkills(profile.skills) at the bottom.
 
 function renderSkills(skillsArray) {
-  // your code here
-  const skillsListSelecUl = document.getElementById("skills-list");
-
-  skillsArray.forEach((skill)=>{
-      const newli = document.createElement('li');
-      newli.textContent = `${skill}`;
-      skillsListSelecUl.appendChild(newli);
-  })
+  const skillsEl = document.getElementById("skills-list");
+  skillsArray.forEach((skill) => {
+    const li = document.createElement("li");
+    li.textContent = skill;
+    skillsEl.appendChild(li);
+  });
 }
 
 renderSkills(profile.skills);
@@ -333,17 +321,13 @@ renderSkills(profile.skills);
 // Call addSkill("Docker") to add another.
 
 function addSkill(skillName) {
-  // your code here
-
-  const newliEl = document.createElement('li');
-  newliEl.textContent = `${skillName}`;
-  const skillsListUl = document.getElementById("skills-list");
-
-  skillsListUl.appendChild(newliEl);
+  const skillList = document.getElementById("skills-list");
+  const li = document.createElement("li");
+  li.textContent = skillName;
+  skillList.appendChild(li);
 }
 
-addSkill("TypeScript");
-addSkill("Docker");
+addSkill("Python");
 
 // ----------------------------------------------------------
 // PART 5 — CONNECT THE DOTS (all 10 lessons)
@@ -360,11 +344,14 @@ addSkill("Docker");
 // Call removeFirstSkill() once and watch the first skill disappear.
 
 function removeFirstSkill() {
-  // your code here
-    const skillListSelect = document.getElementById('skills-list');
-    
-    skillListSelect.firstElementChild.remove();
-    console.log(`Removed skill. Skills remaining: ${skillListSelect.children.length}`);
+  const skillList = document.getElementById("skills-list");
+  const firstSkill = skillList.firstElementChild;
+
+  if (firstSkill) {
+    firstSkill.remove();
+  }
+
+  console.log(`Removed skill. Skills remaining: ${skillList.children.length}`);
 }
 
 removeFirstSkill();
@@ -386,7 +373,6 @@ removeFirstSkill();
 // function that orchestrates rendering the whole page.
 
 function renderProfile() {
-  // your code here
   renderHeader();
   renderProfileCard();
   renderStatusBadge(profile.status);
@@ -405,6 +391,6 @@ function renderProfile() {
 
 renderProfile();
 toggleDarkMode();
-addSkill("Power BI");
+addSkill("Java");
 removeFirstSkill();
 selectElements();
