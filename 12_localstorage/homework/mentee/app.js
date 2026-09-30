@@ -78,6 +78,12 @@ let tasks = [];
 
 function saveTasks() {
   // your code here
+  localStorage.setItem("taskBoardData", JSON.stringify(tasks));
+  const saveIndicator = document.getElementById("save-indicator");
+  saveIndicator.classList.add("visible");
+  setTimeout(function(){
+    saveIndicator.classList.remove("visible");
+  }, 1500);
 }
 
 // ----------------------------------------------------------
@@ -101,6 +107,15 @@ function saveTasks() {
 
 function loadTasks() {
   // your code here
+  const raw = localStorage.getItem("taskBoardData");
+  if (!raw){
+    tasks =[...defaultTasks] //deep copy the whole of defaultTasks and place it into task at beginning
+    saveTasks();
+    return;
+  }
+  else{ //if data already exists
+    tasks = JSON.parse(raw);
+  }
 }
 
 // ----------------------------------------------------------
@@ -109,7 +124,7 @@ function loadTasks() {
 // Carried from Event Listeners — same structure, restated here
 // so you don't have to flip back to that file.
 // Parameter: task (object)
-//
+//v
 // Build and return a <li> with:
 //   1. class "task-card"
 //      dataset.id = task.id
@@ -127,10 +142,44 @@ function loadTasks() {
 //   6. Append title, meta, and actions to the <li>
 //
 // Return the <li> — do NOT append it here.
-
 function createTaskCard(task) {
   // your code here
+  const newliElement = document.createElement("li");
+  newliElement.classList.add("task-card");
+  newliElement.dataset.id = task.id;
+  newliElement.dataset.priority = task.priority;
+
+  const newPElement = document.createElement("p");
+  newPElement.classList.add("task-title");
+  newPElement.textContent = task.title;
+
+  const newDivClass = document.createElement("div");
+  newDivClass.classList.add("task-meta");
+  const newSpanPriority = document.createElement("span");
+  newSpanPriority.classList.add(`priority-${task.priority}`);
+  newSpanPriority.textContent = task.priority.toUpperCase();
+  const newTaskPriorityAssignee = document.createElement("span");
+  newTaskPriorityAssignee.textContent =  `👤 ${task.assignee}`;
+  newDivClass.append(newSpanPriority, newTaskPriorityAssignee);
+
+  const newCardActionsDiv = document.createElement("div");
+  newCardActionsDiv.classList.add("card-actions");
+  const newClassButtonCompleteBtn = document.createElement("button");
+  newClassButtonCompleteBtn.textContent = "✅ Complete";
+  newClassButtonCompleteBtn.classList.add("complete-btn");
+  const newClassButtonRemoveBtn = document.createElement("button");
+  newClassButtonRemoveBtn.textContent = "🗑️ Remove";
+  newClassButtonRemoveBtn.classList.add("remove-btn");
+  newCardActionsDiv.append(newClassButtonCompleteBtn, newClassButtonRemoveBtn);
+
+  if (task.status === "done"){
+    newliElement.classList.add("completed");
+  }
+  newliElement.append(newPElement, newDivClass, newCardActionsDiv);
+
+  return newliElement;
 }
+
 
 // ----------------------------------------------------------
 // TASK 4 — renderBoard + updateCounts
@@ -162,12 +211,42 @@ function createTaskCard(task) {
 
 function updateCounts() {
   // your code here
+  const doneTasks = tasks.filter((task)=> (task.status === "done"));
+  const pendingTasks = tasks.filter((task)=> (task.status !== "done"));
+  const todoTasks = tasks.filter((task)=> (task.status === "todo"));
+  const inprogressTasks = tasks.filter((task)=> (task.status === "inprogress"));
+  document.getElementById("task-count").textContent = tasks.length + " tasks";
+  document.getElementById("completed-count").textContent = "✅ " + doneTasks.length + " done";
+  document.getElementById("pending-count").textContent = "⏳ " + pendingTasks.length + " pending";
+  document.getElementById("count-todo").textContent = todoTasks.length;
+  document.getElementById("count-inprogress").textContent = inprogressTasks.length;
+  document.getElementById("count-done").textContent = doneTasks.length;
 }
 
 function renderBoard() {
   // your code here
-}
+    const todoList = document.getElementById("list-todo");
+    const inProgressList = document.getElementById("list-inprogress");
+    const doneList = document.getElementById("list-done");
 
+    todoList.innerHTML = "";
+    inProgressList.innerHTML = "";
+    doneList.innerHTML = "";
+
+    tasks.forEach((task)=>{
+      const newTask = createTaskCard(task);
+      if (task.status === "todo"){
+          todoList.append(newTask);
+      }
+      else if (task.status === "inprogress"){
+          inProgressList.append(newTask);
+      }
+      else{
+        doneList.append(newTask);
+      }         
+    });
+    updateCounts();
+}
 // ----------------------------------------------------------
 // TASK 5 — handleAddTask
 // ----------------------------------------------------------
@@ -197,6 +276,26 @@ function renderBoard() {
 
 function handleAddTask() {
   // your code here
+  const taskTitleInput = document.getElementById("task-title-input").value.trim();
+  const taskAssigneeInput = document.getElementById("task-assignee-input").value.trim();
+  const taskPriorityInput = document.getElementById("task-priority-input").value;
+  const taskStatusInput = document.getElementById("task-status-input").value;
+  if (!taskTitleInput){
+    console.log("Title is required");    
+    return;
+  }
+  const newTaskObj = {
+    id: Date.now(),
+    title: taskTitleInput,
+    assignee: taskAssigneeInput || "Unassigned",
+    priority: taskPriorityInput,
+    status: taskStatusInput,
+  };
+  tasks.push(newTaskObj);
+  saveTasks();
+  renderBoard();
+  document.getElementById("task-title-input").value = "";
+  document.getElementById("task-assignee-input").value = "";
 }
 
 document
@@ -229,6 +328,24 @@ document
 
 function handleBoardClick(event) {
   // your code here
+  const clickedElement = event.target;
+  const taskCard = clickedElement.closest(".task-card");
+  if (!taskCard){
+    return;
+  }
+  const taskId = parseInt(taskCard.dataset.id);
+  const taskFound = tasks.find((task)=> (task.id === taskId));// return one task array if found
+  if (clickedElement.classList.contains("complete-btn")){
+    taskFound.status = "done";
+    saveTasks();
+    renderBoard();
+  }
+  if (clickedElement.classList.contains("remove-btn")){
+     const index = tasks.findIndex(task => task.id === taskId)
+     tasks.splice(index, 1);
+     saveTasks();
+     renderBoard();
+  }
 }
 
 document.querySelector(".board").addEventListener("click", handleBoardClick);
@@ -252,6 +369,15 @@ document.querySelector(".board").addEventListener("click", handleBoardClick);
 
 function handleClearAll() {
   // your code here
+  if (!confirm("Clear all tasks? This cannot be undone.")) return;
+
+  localStorage.removeItem("taskBoardData")
+  
+  tasks = [...defaultTasks];
+  
+  saveTasks();
+
+  renderBoard();
 }
 
 document.getElementById("clear-btn").addEventListener("click", handleClearAll);
@@ -268,6 +394,10 @@ document.getElementById("clear-btn").addEventListener("click", handleClearAll);
 
 function init() {
   // your code here
+  loadTasks();
+  renderBoard();  
+  let savedFilter = loadFilter();
+  applyFilter(savedFilter);
 }
 
 // ----------------------------------------------------------
@@ -293,6 +423,60 @@ function init() {
 //       Apply the saved filter (update active button + show/hide cards)
 //
 // Write a comment: what other UI state might be worth persisting?
+
+function saveFilter(filterValue){
+    localStorage.setItem("taskFilter", filterValue);
+}
+
+function loadFilter(){
+  const currentFilter = localStorage.getItem("taskFilter") || "all";
+  return currentFilter;
+}
+
+function applyFilter(filterValue){
+  const todoList = document.getElementById("list-todo");
+  const inProgressList = document.getElementById("list-inprogress");
+  const doneList = document.getElementById("list-done");
+
+  todoList.innerHTML = "";
+  inProgressList.innerHTML = "";
+  doneList.innerHTML = "";
+
+  let filteredTasks = tasks.filter((task)=>(task.priority === filterValue));
+
+  if (filterValue === "all"){
+    filteredTasks = [...tasks];
+  }
+
+  filteredTasks.forEach((task)=> {
+       const newTask = createTaskCard(task);
+      if (task.status === "todo"){
+          todoList.append(newTask);
+      }
+      else if (task.status === "inprogress"){
+          inProgressList.append(newTask);
+      }
+      else{
+        doneList.append(newTask);
+      }         
+    });
+    updateCounts();
+}
+
+const filterparent = document.querySelector(".header-right");
+filterparent.addEventListener('click', (event)=>{
+  const possibleClickedFilterButton = event.target;
+  const closestFilterButton = possibleClickedFilterButton.closest(".filter-btn");
+  if (!closestFilterButton){
+    return;
+  }
+  saveFilter(closestFilterButton.dataset.filter);
+  applyFilter(closestFilterButton.dataset.filter);
+});
+
+// Write a comment: what other UI state might be worth persisting?
+// although the feature is not implemented yet. other ui settings like nightmode can be saved
+// we can also save down last task and last name input into the task to do list.
 
 // ============================================================
 // START
