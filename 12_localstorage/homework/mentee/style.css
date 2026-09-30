@@ -147,7 +147,6 @@ body {
 
 @media (max-width: 768px) { .board { grid-template-columns: 1fr; } }
 
-
 /* Filter buttons */
 .filter-btn {
   background: none;
