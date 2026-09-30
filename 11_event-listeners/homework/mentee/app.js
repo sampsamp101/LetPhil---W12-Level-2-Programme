@@ -241,18 +241,18 @@ function handleAddTask() {
     console.log("Title is required");    
     return;
   }
-const newTaskObj = {
-  id: Date.now(),
-  title: taskTitleInput,
-  assignee: taskAssigneeInput || "Unassigned",
-  priority: taskPriorityInput,
-  status: taskStatusInput,
-};
+  const newTaskObj = {
+    id: Date.now(),
+    title: taskTitleInput,
+    assignee: taskAssigneeInput || "Unassigned",
+    priority: taskPriorityInput,
+    status: taskStatusInput,
+  };
 
   tasks.push(newTaskObj);
   renderBoard(tasks);
-document.getElementById("task-title-input").value = "";
-document.getElementById("task-assignee-input").value = "";
+  document.getElementById("task-title-input").value = "";
+  document.getElementById("task-assignee-input").value = "";
 }
 
 document.getElementById("add-task-btn").addEventListener("click", handleAddTask);

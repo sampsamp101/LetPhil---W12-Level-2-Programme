@@ -97,10 +97,11 @@ document.querySelector(".header-right").addEventListener("click", handleFilter);
 //   }
 // }
 // document.querySelector(".board").addEventListener("click", handleBoardClick);
-// the problem is that you trying to target event.target instead of taskId. we want to target the child element of the parent element which in this case
-// is the board itself.
+// first bug is not putting in boundary checks or existary check before proceeding with the logic which will cause the logic to crash instead if not exist
 //
 //
+//secondary we might need to delete the specific task off the card not just the remove the card itself and lastly make sure to update the final count for it.
+
 
 function handleBoardClick(event) {
   const card = event.target.closest(".task-card");
@@ -116,10 +117,5 @@ function handleBoardClick(event) {
   }
 }
 document.querySelector(".board").addEventListener("click", handleBoardClick);
-
 // Bug 2 ↓
-
-
-
-
 // Your fix ↓
