@@ -209,8 +209,12 @@ document.getElementById("save-btn").addEventListener("click", saveProfile);
 // the count can never go stale.
 
 function updateCharCount() {
-  // your code here
+  const len = document.getElementById("bio-input").value.length;
+  const charCount = document.getElementById("char-count");
+  charCount.textContent = len + " / 200";
 }
+
+// updateCharCount();
 
 // ----------------------------------------------------------
 // PART 4 — LOADING SAVED DATA
@@ -268,7 +272,15 @@ function updateCharCount() {
 //     case, resetting while in dark mode leaves the page dark.
 
 function applyDarkMode(isDark) {
-  // your code here
+  if (isDark) {
+    //to trigger call in true
+    document.body.classList.add("dark"); //add dark class css to the body document
+    document.getElementById("theme-btn").textContent = "☀️ Light Mode"; //change text theme  of button to light mode
+  } else {
+    //to trigger call in false
+    document.body.classList.remove("dark"); //remove dark class css to body document
+    document.getElementById("theme-btn").textContent = "🌙 Dark Mode"; //change text theme of button to dark mode
+  }
 }
 
 // Then declare a function called renderWithDefaults.
@@ -288,11 +300,41 @@ function applyDarkMode(isDark) {
 // status dropdown, dark mode class, theme button text.
 
 function renderWithDefaults() {
-  // your code here
+  document.getElementById("bio-input").value = defaultProfile.bio;
+  const skillsList = document.getElementById("skills-list");
+  skillsList.textContent = "";
+  defaultProfile.skills.forEach((skill) => {
+    addSkillToPage(skill);
+  });
+
+  document.getElementById("status-select").value = defaultProfile.status;
+  renderStatusBadge(defaultProfile.status);
+  applyDarkMode(defaultProfile.darkMode);
+  updateCharCount();
 }
 
 function loadProfile() {
-  // your code here
+  const saved = localStorage.getItem("profileData");
+  if (saved === null) {
+    // this handles the edge case when the user did NOT save anything to the local storage (did not click the save button)
+    renderWithDefaults();
+    return;
+  }
+
+  const profileData = JSON.parse(saved);
+  document.getElementById("bio-input").value = profileData.bio;
+
+  const skillsList = document.getElementById("skills-list");
+  skillsList.innerHTML = "";
+  profileData.skills.forEach((skill) => addSkillToPage(skill));
+
+  document.getElementById("status-select").value = profileData.status;
+  renderStatusBadge(profileData.status);
+  applyDarkMode(profileData.darkMode);
+  updateCharCount();
+  const storageStat = document.getElementById("storage-status");
+  storageStat.textContent = "✅ Profile loaded from storage";
+  storageStat.className = saved;
 }
 
 // ----------------------------------------------------------
@@ -324,7 +366,15 @@ function loadProfile() {
 //    to "Reset to Defaults" so the label matches the behaviour.
 
 function resetProfile() {
-  // your code here
+  localStorage.removeItem("profileData");
+  renderWithDefaults();
+  const storageStatusEl = document.getElementById("storage-status");
+  storageStatusEl.textContent = "↩️ Reset to defaults";
+  storageStatusEl.classList.add("cleared");
+  console.log("Saved data removed — page reset to defaults");
+
+  const clearBtnEl = document.getElementById("clear-btn");
+  clearBtnEl.textContent = "Reset to Defaults";
 }
 
 document.getElementById("clear-btn").addEventListener("click", resetProfile);
@@ -343,14 +393,27 @@ document.getElementById("clear-btn").addEventListener("click", resetProfile);
 // (Same as Event Listeners lesson — copy your logic here)
 
 function addSkillToPage(skillName) {
-  // your code here
+  const skillsList = document.getElementById("skills-list");
+  const newLi = document.createElement("li");
+  newLi.textContent = skillName;
+
+  newLi.addEventListener("click", () => {
+    newLi.remove();
+    updateSkillCount();
+    saveProfile();
+  });
+
+  skillsList.append(newLi);
+  updateSkillCount();
 }
 
 // Declare a function called updateSkillCount.
 // Updates #skill-count with the current number of skills.
 
 function updateSkillCount() {
-  // your code here
+  const skillsList = document.getElementById("skills-list");
+  document.getElementById("skill-count").textContent =
+    skillsList.children.length;
 }
 
 // Declare a function called renderStatusBadge.
@@ -359,9 +422,23 @@ function updateSkillCount() {
 // (Same as Event Listeners lesson)
 
 function renderStatusBadge(status) {
-  // your code here
+  const statusBadge = document.getElementById("status-badge"); // get the current value that is selected in the drop down
+  statusBadge.classList.remove("active", "away", "offline");
+  statusBadge.textContent = status;
+  statusBadge.classList.add(status);
+  console.log(statusBadge);
 }
 
+//    if (status === "active") {
+//   statusBadge.textContent = "Active";
+//   statusBadge.classList.add("active");
+// } else if (status === "away") {
+//   statusBadge.textContent = "away";
+//   statusBadge.classList.add("Away");
+// } else if (status === "offline") {
+//   statusBadge.textContent = "Offline";
+//   statusBadge.classList.add("Offline");
+// }
 // ----------------------------------------------------------
 // PART 7 — EXISTING EVENT LISTENERS
 // ----------------------------------------------------------
@@ -388,15 +465,38 @@ function renderStatusBadge(status) {
 //    calls renderStatusBadge.
 
 function handleThemeToggle() {
-  // your code here
+  document.body.classList.toggle("dark");
+  const isDark = document.body.classList.contains("dark");
+  document.getElementById("theme-btn").textContent = isDark
+    ? "Light Mode"
+    : "Dark Mode";
+  saveProfile();
 }
 
 function handleSkillSubmit(event) {
-  // your code here
+  event.preventDefault(); //stop propagation
+  const skillInput = document.getElementById("skill-input"); //target input adding skills
+  const skillName = skillInput.value.trim(); //trim whitespaces
+
+  if (!skillName) return; // only one line of code, no brackets necessary
+
+  // handle the edge case when the user inputs a skill that is already in the skills list
+  const existingSkill = getCurrentSkills().some(
+    // use .some to check if the skill is in the list
+    (skill) => skill.trim().toLowerCase() === skillName.toLowerCase(),
+  );
+
+  if (existingSkill) {
+    alert("This skill already exisits. Try adding a different one!");
+    return;
+  }
+  addSkillToPage(skillName);
+  saveProfile();
+  skillInput.value = "";
 }
 
 function handleStatusChange(event) {
-  // your code here
+  renderStatusBadge(event.target.value);
 }
 
 document
@@ -431,8 +531,19 @@ document
 document
   .getElementById("bio-input")
   .addEventListener("input", function (event) {
-    // your code here
+    updateCharCount();
+    saveProfile();
   });
+
+document
+  .getElementById("status-select")
+  .addEventListener("change", handleStatusChange);
+
+function handleStatusChange(event) {
+  event.preventDefault(); // is this necessary
+  renderStatusBadge(event.target.value);
+  saveProfile();
+}
 
 // ============================================================
 // START THE PAGE
