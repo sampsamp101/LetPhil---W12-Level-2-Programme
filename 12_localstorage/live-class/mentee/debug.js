@@ -18,7 +18,6 @@ console.log(retrieved);
 console.log(retrieved.name); // undefined
 
 // What's wrong ↓
-
 // Your fix ↓
 
 

@@ -49,7 +49,6 @@ Fake but realistic REST API. 100 posts, 10 users, 200 todos. Perfect for learnin
 
 **Open-Meteo** — `api.open-meteo.com`
 Real live weather data. Free forever, no key needed.
-
 ---
 
 ## 🌍 Real-World Connection

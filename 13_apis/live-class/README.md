@@ -68,13 +68,11 @@ The server's response always includes a status code:
 **2xx — Success**
 - `200 OK` — request succeeded
 - `201 Created` — new resource was created
-
 **4xx — Client Error (your fault)**
 - `400 Bad Request` — your data was malformed or missing fields
 - `401 Unauthorized` — you're not logged in / no valid token
 - `403 Forbidden` — you're logged in but don't have permission
 - `404 Not Found` — the resource doesn't exist at that URL
-
 **5xx — Server Error (their fault)**
 - `500 Internal Server Error` — a bug on the server side
 
@@ -115,7 +113,6 @@ API responses are sent as **JSON** — a text format that looks like a JavaScrip
 ```js
 // JSON string (what the API sends)
 '{"name":"Alex","age":28,"tags":["js","css"]}'
-
 // JavaScript object (what you work with)
 { name: "Alex", age: 28, tags: ["js", "css"] }
 ```
