@@ -134,16 +134,16 @@ function formatJSON(value, depth) {
 // Now answer these questions as comments:
 
 // Q1: What is the URL you called? Write it here:
-// URL:
+// URL: https://jsonplaceholder.typicode.com/posts/1
 
 // Q2: What HTTP method did the browser use? (GET/POST/PUT/DELETE)
-// Method:
+// Method: GET
 
 // Q3: List the 4 properties in the response:
-// Properties:
+// Properties: userId, id, title, body
 
 // Q4: What data type is "userId"? What type is "title"?
-// Types:
+// Types: int. str.
 
 // ============================================================
 // PART 3 — QUERY PARAMETERS
@@ -167,16 +167,17 @@ function formatJSON(value, depth) {
 // Write what changes as a comment next to each.
 
 // URL A: https://jsonplaceholder.typicode.com/posts
-// How many posts? Write it:
+// How many posts? Write it: 100
 
 // URL B: https://jsonplaceholder.typicode.com/posts?userId=1
-// How many posts now? What changed?
+// How many posts now? What changed? 10 posts. Only posts with userID=1 are returned
 
 // URL C: https://jsonplaceholder.typicode.com/posts?userId=1&_limit=3
 // How many posts now? What did _limit do?
+// 3 posts, limit sets the restriction for how many posts we can see
 
-// URL D: https://jsonplaceholder.typicode.com/posts?_page=2&_limit=5
-// What posts appeared? What did _page do?
+// URL D: https://jsonplaceholder.typicode.com/posts?_limit=5&_page=2
+// What posts appeared? What did _page do? limited 5 post from page 2
 
 // Write a comment explaining in plain English what query params do:
 // Query params:
@@ -223,35 +224,93 @@ const mockResponse = `{
 // a) Parse mockResponse into a JavaScript object called apiData
 // const apiData = ...
 
+const apiData = JSON.parse(mockResponse);
+
 // b) Log the user's name
 // console.log(apiData...);
 
+console.log(apiData.data.user.name);
+
 // c) Log whether the user is premium
 // console.log(apiData...);
+console.log("check if user is premium:   " + apiData.data.user.isPremium);
 
 // d) Log the first tag in the tags array
 // console.log(apiData...);
+console.log("First tag in the tags array: " + apiData.data.user.tags[0]);
 
 // e) Log the title of the second post
 // console.log(apiData...);
+console.log(`Title of second post: ${apiData.data.posts[1].title}`);
 
 // f) Log the total number of posts
 // console.log(apiData...);
+
+console.log(apiData.data.posts.length); // 3
 
 // TASK 4 — Loop through an API results array
 // Using apiData from Task 3:
 //
 // a) Use forEach to log each post in this format:
 //    "Post [id]: [title] — [likes] likes"
+
+apiData.data.posts.forEach((post) => {
+  console.log(`Post ${post.id}: ${post.title} — ${post.likes} likes`);
+});
+
 //
 // b) Use filter to find posts with more than 100 likes.
 //    Log how many there are.
 //
+
+const postGreaterThan100 = apiData.data.posts.filter(
+  (post) => post.likes > 100,
+);
+console.log(postGreaterThan100.length); // 2
+
 // c) Use find to get the post with id === 2.
 //    Log its title.
+
+// "posts": [
+//       { "id": 1, "title": "Getting Started with JS", "likes": 142 },
+//       { "id": 2, "title": "Understanding the DOM",    "likes": 89  },
+//       { "id": 3, "title": "APIs Made Simple",          "likes": 203 }
+//     ]
+
+const print_second_title = apiData.data.posts.find(
+  (userPosts) => userPosts.id === 2,
+);
+
+console.log(print_second_title.title);
+
+// apiData.data.posts.forEach((post) => {
+//   console.log(post.find((userPosts) => userPosts.id === 2).title);
+// });
+
+// const mockResponse = `{
+//   "status": 200,
+//   "data": {
+//     "user": {
+//       "id": 42,
+//       "name": "Sofia Patel",
+//       "email": "sofia@example.com",
+//       "isPremium": true,
+//       "tags": ["developer", "mentor", "speaker"]
+//     },
+//     "posts": [
+//       { "id": 1, "title": "Getting Started with JS", "likes": 142 },
+//       { "id": 2, "title": "Understanding the DOM",    "likes": 89  },
+//       { "id": 3, "title": "APIs Made Simple",          "likes": 203 }
+//     ]
+//   }
+// }`;
 //
 // d) Use map to create an array of just the post titles.
 //    Log the titles array.
+const postTitles = apiData.data.posts.map((post) => {
+  return post.title;
+});
+console.log(postTitles);
 
 // ============================================================
 // PART 5 — HTTP METHODS AND STATUS CODES
@@ -262,19 +321,19 @@ const mockResponse = `{
 // Write your answers as comments.
 
 // Scenario A: Fetch a list of all products from a store.
-// Method:
+// Method: Get
 
 // Scenario B: Submit a new blog post.
-// Method:
+// Method: Post
 
 // Scenario C: Change a user's email address.
-// Method:
+// Method: PUT
 
 // Scenario D: Delete a comment.
-// Method:
+// Method: DELETE
 
 // Scenario E: Search for products with ?q=laptop
-// Method:
+// Method: GET
 
 // TASK 6 — Decode the status code
 // For each status code, write what it means in plain English.
@@ -282,23 +341,23 @@ const mockResponse = `{
 
 // You try to fetch a post that was deleted:
 // Status code: 404
-// Meaning:
+// Meaning: Doesnt exist.
 
 // You try to access your bank account but your session expired:
 // Status code: 401
-// Meaning:
+// Meaning: YOu need to be authenticated session expired/ expired token.
 
 // You successfully created a new user account:
 // Status code: 201
-// Meaning:
+// Meaning: successfully created an account!
 
 // You sent a form with an empty required field:
 // Status code: 400
-// Meaning:
+// Meaning: Missing required fields. Poor request
 
 // The server crashed because of a bug in their code:
 // Status code: 500
-// Meaning:
+// Meaning: server error on their side
 
 // ============================================================
 // PART 6 — READING API DOCUMENTATION
@@ -311,18 +370,20 @@ const mockResponse = `{
 //
 // Answer as comments:
 // Q1: What URL would you use to get ALL users?
-// URL:
+// URL: https://jsonplaceholder.typicode.com/users
 
 // Q2: What URL would you use to get user with ID 3?
-// URL:
+// URL: https://jsonplaceholder.typicode.com/users?id=3
 
 // Q3: What URL would you use to get all posts by user 2?
 //     (Hint: look for query parameter examples on the page)
-// URL:
+// URL:https://jsonplaceholder.typicode.com/posts?userId=2
 
 // Q4: What URL would you use to get the comments on post 5?
 //     (Hint: look for nested resource routes)
-// URL:
+// URL: https://jsonplaceholder.typicode.com/comments?postId=5
+
+// https://jsonplaceholder.typicode.com/posts/5/comments
 
 // TASK 8 — Build a query string manually
 // Declare a function called buildQueryString.
@@ -337,8 +398,14 @@ const mockResponse = `{
 // then .join("&"), then prepend "?".
 
 function buildQueryString(paramsObject) {
-  // your code here
+  const queries = Object.keys(paramsObject).map(
+    (key) => `${key}=${paramsObject[key]}`,
+  );
+  const query = "?" + queries.join("&");
+  return query;
 }
+
+// ["userId", "_limit"]
 
 // Test it:
 console.log(buildQueryString({ userId: 1, _limit: 5 }));
