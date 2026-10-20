@@ -94,7 +94,7 @@ function createProfileCard(user) {
           <span class="counter">${user.public_repos}</span> repos
         </p>
   `;
-
+  
   return newDiv;
 }
 

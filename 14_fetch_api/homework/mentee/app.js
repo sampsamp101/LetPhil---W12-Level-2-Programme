@@ -55,9 +55,9 @@ function getWeatherDescription(code) {
   return { label: "Unknown", icon: "🌡️" };
 }
 
-// ----------------------------------------------------------
-// TASK 1 — safeFetch helper
-// ----------------------------------------------------------
+// -------------------------------------
+// 
+
 // Declare a function called safeFetch.
 // Parameter: url (string)
 //
@@ -70,8 +70,29 @@ function getWeatherDescription(code) {
 // This is the same helper from the live class.
 
 function safeFetch(url) {
-  // your code here
+  return fetch(url).then((response)=> {
+     if(!response.ok){
+       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+     }
+     return response.json()
+  });
 }
+
+// // Test 1: success, should print the user's name
+// safeFetch("https://jsonplaceholder.typicode.com/users/1")
+//   .then((data) => console.log("Test 1 OK:", data.name))
+//   .catch((err) => console.log("Test 1 FAILED:", err.message));
+
+// // Test 2: 404, should print "HTTP 404: Not Found"
+// safeFetch("https://jsonplaceholder.typicode.com/users/99999")
+//   .then((data) => console.log("Test 2 FAILED, got data:", data))
+//   .catch((err) => console.log("Test 2 OK:", err.message));
+
+// // Test 3: chaining, the result should pass through to the next .then
+// safeFetch("https://jsonplaceholder.typicode.com/posts/1")
+//   .then((post) => post.title)
+//   .then((title) => console.log("Test 3 OK:", title))
+//   .catch((err) => console.log("Test 3 FAILED:", err.message));
 
 // ----------------------------------------------------------
 // TASK 2 — DOM helpers
@@ -100,26 +121,66 @@ function getEl(id) {
 
 function showSpinner(msg) {
   // your code here
+  const loadingSpinnerEle = document.getElementById("loading-spinner");
+  const loadingMessageEle = document.getElementById("loading-message"); 
+  if (!loadingSpinnerEle || !loadingMessageEle){
+    return;
+  }
+  loadingSpinnerEle.classList.remove("hidden");
+  loadingMessageEle.textContent = msg;
 }
 
 function hideSpinner() {
   // your code here
+  const loadingSpinnerEle = document.getElementById("loading-spinner");
+  if (!loadingSpinnerEle){
+    return;
+  }
+  loadingSpinnerEle.classList.add("hidden");
 }
 
 function showError(msg) {
   // your code here
+  // showError(msg)      → remove "hidden" from #error-box
+  //set #error-message textContent to msg
+  const showErrorBoxEle = document.getElementById("error-box");
+  const showErrorMsgEle = document.getElementById("error-message");
+  if (!showErrorBoxEle || !showErrorMsgEle){
+    return;
+  }
+  showErrorBoxEle.classList.remove("hidden");
+  showErrorMsgEle.textContent = msg;
 }
 
 function hideError() {
   // your code here
+  const errorBoxEle = document.getElementById("error-box");
+  if(!errorBoxEle){
+    return;
+  }
+  errorBoxEle.classList.add("hidden");
 }
 
 function showStatus(msg, type) {
   // your code here
-}
+  const statusBarElement = document.getElementById("status-bar");
+  const statusMsgElement = document.getElementById("status-message");
+
+  if (!statusBarElement || !statusMsgElement){
+      return;
+  }
+
+  statusBarElement.className =  "status-bar " + (type || "")
+  statusMsgElement.textContent = msg;
+} 
 
 function hideStatus() {
   // your code here
+  const highStatus = document.getElementById("status-bar");
+  if (!highStatus){
+    return;
+  }
+  highStatus.classList.add("hidden");
 }
 
 // ----------------------------------------------------------
@@ -134,7 +195,9 @@ function hideStatus() {
 //              + "&current_weather=true"
 
 function buildWeatherUrl(city) {
-  // your code here
+  return  WEATHER_API + "?latitude=" + city.lat
+              + "&longitude=" + city.lon
+              + "&current_weather=true";
 }
 
 // Test it:
@@ -146,7 +209,6 @@ function buildWeatherUrl(city) {
 // ----------------------------------------------------------
 // Declare a function called createWeatherCard.
 // Parameters: cityName (string), data (parsed API response)
-//
 // The weather data lives at data.current_weather:
 //   data.current_weather.temperature   → number (°C)
 //   data.current_weather.windspeed     → number (km/h)
@@ -171,7 +233,38 @@ function buildWeatherUrl(city) {
 // Return the card.
 
 function createWeatherCard(cityName, data) {
-  // your code here
+  const newCardElement = document.createElement("div");
+  newCardElement.classList.add("weather-card");
+
+  newCardElement.innerHTML += `<p class="city-name"> 
+       ${cityName}
+      </p>
+      <p class="coord-text"> 
+        Lat: ${data.latitude} | Lon: ${data.longitude}
+      </p>
+      <span class="weather-icon"> 
+      ${getWeatherDescription(data.current_weather.weathercode).icon}
+      </span>
+      <p class="temperature"> 
+        ${data.current_weather.temperature}°C
+      </p>
+      <p class="condition"> 
+        ${getWeatherDescription(data.current_weather.weathercode).label} °C
+      </p>
+      <div class="weather-stats"> 
+
+          <p class="stat-label">WIND SPEED</p>
+          <p class="stat-value">
+          ${data.current_weather.windspeed} km/h
+          </p>
+          
+          <p class="stat-label">WIND DIRECTION</p>
+          <p class="stat-value">
+          ${data.current_weather.winddirection}°
+          </p>
+      </div>`;
+
+    return newCardElement;
 }
 
 // ----------------------------------------------------------
@@ -198,9 +291,40 @@ function createWeatherCard(cityName, data) {
 //        Remove loading card
 //        showError("Failed to fetch " + city.name + ": " + err.message)
 //      })
-
 function fetchWeatherForCity(cityKey) {
-  // your code here
+  const city = CITIES[cityKey];
+  if (!city) {
+    showError("City not found");
+    return;
+  }
+
+  const weatherGridEle = document.getElementById("weather-grid");
+  if (!weatherGridEle) {
+    return;
+  }
+
+  const newLoadingCard = document.createElement("div");
+  newLoadingCard.className = "card-loading";
+  newLoadingCard.id = `loading-${cityKey}`;
+
+  const newSpinningIcon = document.createElement("div");
+  newSpinningIcon.className = "spin";
+
+  const newSpanLoading = document.createElement("span");
+  newSpanLoading.textContent = `Loading ${city.name}...`;
+
+  newLoadingCard.append(newSpinningIcon, newSpanLoading);
+  weatherGridEle.appendChild(newLoadingCard);
+
+  safeFetch(buildWeatherUrl(city))
+    .then(function (data) {
+      document.getElementById(`loading-${cityKey}`)?.remove();
+      weatherGridEle.appendChild(createWeatherCard(city.name, data));
+    })
+    .catch(function (err) {
+      document.getElementById(`loading-${cityKey}`)?.remove();
+      showError("Failed to fetch " + city.name + ": " + err.message);
+    });
 }
 
 // ----------------------------------------------------------
@@ -220,6 +344,17 @@ function fetchWeatherForCity(cityKey) {
 
 function handleFetchWeather() {
   // your code here
+  const selectedCityKeyEle = document.getElementById("city-select");
+  if (!selectedCityKeyEle){
+    return;
+  }
+  if (!selectedCityKeyEle.value){
+    showError("Please select a city");
+    return;
+  }
+  hideError();
+  const cityKey = selectedCityKeyEle.value;
+  fetchWeatherForCity(cityKey);
 }
 
 document
@@ -249,11 +384,19 @@ document
 
 function fetchAllCities() {
   // your code here
+  document.getElementById("weather-grid").innerHTML = "";
+  hideError();
+  showStatus("🌍 Fetching all cities...", "");
+
+  for (const citiesKeys of Object.keys(CITIES)){
+    fetchWeatherForCity(citiesKeys);
+  }
+ showStatus("✅ All cities loaded", "success")
 }
 
-document
-  .getElementById("fetch-all-btn")
-  .addEventListener("click", fetchAllCities);
+// document
+//   .getElementById("fetch-all-btn")
+//   .addEventListener("click", fetchAllCities);
 
 // ----------------------------------------------------------
 // TASK 8 — clear all
@@ -265,6 +408,11 @@ document
 
 document.getElementById("clear-btn").addEventListener("click", function () {
   // your code here
+    getEl("weather-grid").innerHTML = "";
+    hideError();
+    hideStatus();
+    const citySelectField = document.getElementById("city-select");
+    citySelectField.value = "";
 });
 
 // ----------------------------------------------------------
@@ -290,7 +438,7 @@ document.getElementById("clear-btn").addEventListener("click", function () {
 //      });
 //   5. Promise.all(promises)
 //      .then(function(results) {
-//        results.forEach(function(result) {
+//        results.forEach(function(result) {Object.keys(CITIES)
 //          const city = CITIES[result.key];
 //          const card = createWeatherCard(city.name, result.data);
 //          getEl("weather-grid").appendChild(card);
@@ -307,4 +455,38 @@ document.getElementById("clear-btn").addEventListener("click", function () {
 
 function fetchAllCitiesParallel() {
   // your code here
+    getEl("weather-grid").innerHTML = "";
+    showSpinner("Fetching all cities...");
+
+    const promises = Object.keys(CITIES).map(function(key) {
+    return safeFetch(buildWeatherUrl(CITIES[key]))
+      .then(function(data) {
+        return { key, data };  
+      });
+  });
+
+    Promise.all(promises)
+     .then(function(results) {
+       results.forEach(function(result) {
+         const city = CITIES[result.key];
+         const card = createWeatherCard(city.name, result.data);
+         getEl("weather-grid").appendChild(card);
+       });
+       showStatus("✅ All " + results.length + " cities loaded", "success");
+     })
+     .catch(function(err) {
+       showError("One or more cities failed: " + err.message);
+     })
+     .finally(() => hideSpinner());
 }
+
+document
+  .getElementById("fetch-all-btn")
+  .addEventListener("click", fetchAllCities);
+
+
+// an observation between fetchAllCities and fetchAllCitiesParalllel
+// is that fetchAllCities seems to load everything one by one once their fetching is completed if you 
+// click on fetch all btn.
+// if you use promise.all, you ensure all async operation is done before
+// proceeding to load all info cards on the screen.
