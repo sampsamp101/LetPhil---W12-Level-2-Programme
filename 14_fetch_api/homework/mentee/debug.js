@@ -80,7 +80,6 @@ fetch(WEATHER_API + "?latitude=40.71&longitude=-74.01&current_weather=true")
     console.error("Error:", err.message);
   });
 
-
 // ----------------------------------------------------------
 // 🔴 DEBUG 3 — Hard
 // ----------------------------------------------------------
