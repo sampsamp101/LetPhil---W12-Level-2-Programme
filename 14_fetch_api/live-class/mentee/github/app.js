@@ -148,7 +148,7 @@ function createRepoRow(repo) {
   }
 
   const listItem = document.createElement("li"); // create a new list item
-  listItem.className("repo-row"); // there is no class "repo-row" in the HTML, so add "repo-row" as the class of this list item
+  listItem.className = "repo-row"; // there is no class "repo-row" in the HTML, so add "repo-row" as the class of this list item
 
   listItem.innerHTML = `
        <div class="repo-top">
@@ -240,6 +240,34 @@ function renderReport(repos) {
 //      - clear #repo-list, forEach → appendChild(createRepoRow(repo))
 //   4. .catch → #github-status: `❌ ${error.message}` / "status error"
 //
+
+function fetchRepos(username) {
+  fetch(
+    `https://api.github.com/users/${username}/repos?sort=updated&per_page=10`,
+  )
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Couldn't load repos");
+      }
+      return response.json();
+    })
+
+    .then((repos) => {
+      renderReport(repos);
+      const repoList = document.getElementById("repo-list");
+      repoList.innerHTML = "";
+      repos.forEach((repo) => {
+        repoList.appendChild(createRepoRow(repo));
+      });
+    })
+
+    .catch((error) => {
+      const githubStatus = document.getElementById("github-status");
+      githubStatus.textContent = `❌ ${error.message}`;
+      githubStatus.className = "status error";
+    });
+}
+
 // Then declare a function called checkProfile.
 // No parameters.
 //
@@ -264,12 +292,45 @@ function renderReport(repos) {
 //
 // Test: your own username · "torvalds" · "no-such-user-xyz-123"
 
-function fetchRepos(username) {
-  // your code here
-}
-
 function checkProfile() {
-  // your code here
+  const username = document.getElementById("username-input").value.trim();
+
+  const status = document.getElementById("github-status");
+
+  if (!username) {
+    return;
+  }
+
+  status.textContent = "Checking profile...";
+  status.className = "status loading";
+
+  document.getElementById("profile-card").innerHTML = "";
+  document.getElementById("portfolio-report").innerHTML = "";
+  document.getElementById("repo-list").innerHTML = "";
+
+  fetch(`https://api.github.com/users/${username}`)
+    .then((response) => {
+      if (response.status === 404) {
+        throw new Error(`No GitHub user called "${username}"`);
+      } else if (response.status === 403) {
+        throw new Error("Rate limit hit (60/hour per IP) — wait a bit");
+      } else if (!response.ok) {
+        throw new Error(`Request failed: ${response.status}`);
+      } else {
+        return response.json();
+      }
+    })
+    .then((user) => {
+      const profileCard = document.getElementById("profile-card");
+      status.textContent = `✓ Found ${user.login}`;
+      status.className = "status success";
+      profileCard.appendChild(createProfileCard(user));
+      fetchRepos(username);
+    })
+    .catch((error) => {
+      status.textContent = `❌ ${error.message}`;
+      status.className = "status error";
+    });
 }
 
 // TASK 5 — wire up the form
@@ -277,10 +338,14 @@ function checkProfile() {
 // Wire it to #github-form's submit event.
 
 function handleGithubSubmit(event) {
-  // your code here
+  event.preventDefault();
+  checkProfile();
 }
 
 // wire up the form listener here
+document
+  .getElementById("github-form")
+  .addEventListener("submit", handleGithubSubmit);
 
 // ----------------------------------------------------------
 // ⭐ STRETCH GOAL — the language breakdown
