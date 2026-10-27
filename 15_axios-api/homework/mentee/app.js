@@ -17,6 +17,8 @@
 //   3. async/await + try/catch replaces .then/.catch/.finally
 // ============================================================
 
+// const { createElement } = require("react");
+
 // ============================================================
 // CITY DATA — coordinates for each city in the dropdown
 // ============================================================
@@ -78,8 +80,19 @@ function getWeatherDescription(code) {
 //    embarrassingly short. That's not a mistake — write a
 //    comment explaining why you kept the wrapper anyway.
 
-function safeFetch(url) {
+async function safeFetch(url) {
   // your code here
+  //compared to fetch version, axios function automatically json.Parse the response for you no longer, you need to Json.parse the response .data()
+  //the wrapper is kept to ensure that response is still valid from the server, return. i also put in additional catch funtionality to ensure the error is caught correctly in case 
+  //there is no response from the server.
+  try{
+    const response = await axios.get(url);
+    return response.data;
+  }
+  catch(error){
+    console.error(error);
+    throw error;
+  }
 }
 
 // ----------------------------------------------------------
@@ -106,26 +119,72 @@ function getEl(id) {
 
 function showSpinner(msg) {
   // your code here (same as fetch version)
+  const loadingSpinner = document.getElementById("loading-spinner");
+  const loadingMessage = document.getElementById("loading-message");
+  if (!loadingSpinner || !loadingMessage){
+    return;
+  }
+  if (loadingSpinner.classList.contains("hidden")){
+    loadingSpinner.classList.remove("hidden");
+  }
+  loadingMessage.textContent = msg;
 }
 
 function hideSpinner() {
   // your code here (same as fetch version)
+  const loadingSpinner = document.getElementById("loading-spinner");
+  if (!loadingSpinner){
+    return;
+  } 
+  if (!loadingSpinner.classList.contains("hidden")){
+    loadingSpinner.classList.add("hidden");
+  }
 }
 
 function showError(msg) {
   // your code here (same as fetch version)
+  const errorBox = document.getElementById("error-box");
+  const errorMsg = document.getElementById("error-message");
+  if (!errorBox || !errorMsg){
+    return;
+  }
+  if (errorBox.classList.contains("hidden")){
+    errorBox.classList.remove("hidden");
+  }
+  errorMsg.textContent = msg;
 }
 
 function hideError() {
   // your code here (same as fetch version)
+  const errorBox = document.getElementById("error-box");
+  if (!errorBox){
+    return;
+  }
+  if (!errorBox.classList.contains("hidden")){
+    errorBox.classList.add("hidden");
+  }
 }
 
 function showStatus(msg, type) {
-  // your code here (same as fetch version)
-}
+  // your code here
+  const statusBarElement = document.getElementById("status-bar");
+  const statusMsgElement = document.getElementById("status-message");
+
+  if (!statusBarElement || !statusMsgElement){
+      return;
+  }
+
+  statusBarElement.className =  "status-bar " + (type || "")
+  statusMsgElement.textContent = msg;
+} 
 
 function hideStatus() {
-  // your code here (same as fetch version)
+  // your code here
+  const highStatus = document.getElementById("status-bar");
+  if (!highStatus){
+    return;
+  }
+  highStatus.classList.add("hidden");
 }
 
 // ----------------------------------------------------------
@@ -141,10 +200,12 @@ function hideStatus() {
 //              + "&longitude=" + city.lon
 //              + "&current_weather=true"
 
-function buildWeatherUrl(city) {
-  // your code here (same as fetch version)
-}
 
+function buildWeatherUrl(city) {
+  return  WEATHER_API + "?latitude=" + city.lat
+              + "&longitude=" + city.lon
+              + "&current_weather=true";
+}
 // Test it:
 // console.log(buildWeatherUrl(CITIES["london"]));
 // Expected: "https://api.open-meteo.com/v1/forecast?latitude=51.51&longitude=-0.13&current_weather=true"
@@ -179,9 +240,42 @@ function buildWeatherUrl(city) {
 //
 // Return the card.
 
+
 function createWeatherCard(cityName, data) {
-  // your code here (same as fetch version)
+  const newCardElement = document.createElement("div");
+  newCardElement.classList.add("weather-card");
+
+  newCardElement.innerHTML += `<p class="city-name"> 
+       ${cityName}
+      </p>
+      <p class="coord-text"> 
+        Lat: ${data.latitude} | Lon: ${data.longitude}
+      </p>
+      <span class="weather-icon"> 
+      ${getWeatherDescription(data.current_weather.weathercode).icon}
+      </span>
+      <p class="temperature"> 
+        ${data.current_weather.temperature}°C
+      </p>
+      <p class="condition"> 
+        ${getWeatherDescription(data.current_weather.weathercode).label} °C
+      </p>
+      <div class="weather-stats"> 
+
+          <p class="stat-label">WIND SPEED</p>
+          <p class="stat-value">
+          ${data.current_weather.windspeed} km/h
+          </p>
+          
+          <p class="stat-label">WIND DIRECTION</p>
+          <p class="stat-value">
+          ${data.current_weather.winddirection}°
+          </p>
+      </div>`;
+
+    return newCardElement;
 }
+
 
 // ----------------------------------------------------------
 // TASK 5 — fetchWeatherForCity (axios rebuild)
@@ -211,9 +305,40 @@ function createWeatherCard(cityName, data) {
 //        showError("Failed to fetch " + city.name + ": HTTP " + err.response.status)
 //      ELSE →
 //        showError("Failed to fetch " + city.name + ": " + err.message)
-
-function fetchWeatherForCity(cityKey) {
+ 
+async function fetchWeatherForCity(cityKey) {
   // your code here
+  const city = CITIES[cityKey];
+  
+  if (!city){
+    showError("City not found");
+    return;
+  }
+
+  const weatherGridEle = document.getElementById("weather-grid");
+  if (!weatherGridEle) {
+    return;
+  }
+
+  const tempNewLoadingCard = document.createElement("div");
+  tempNewLoadingCard.classList.add("card-loading");
+  tempNewLoadingCard.id = `loading-${cityKey}`;
+
+  const url = buildWeatherUrl(city);
+
+  try{
+    const data = await safeFetch(url);
+    document.getElementById(`loading-${cityKey}`)?.remove();
+    weatherGridEle.appendChild(createWeatherCard(city.name, data));
+  }catch(error){
+    document.getElementById(`loading-${cityKey}`)?.remove();
+    if (error.response){
+      showError(`Failed to fetch ${city.name}: HTTP ${error.response}`);
+    }
+    else{
+      showError(`Failed to fetch ${city.name}: ${error.message}`);
+    }
+  }
 }
 
 // ----------------------------------------------------------
@@ -236,6 +361,17 @@ function fetchWeatherForCity(cityKey) {
 
 function handleFetchWeather() {
   // your code here (same as fetch version)
+    const selectedCityKeyEle = document.getElementById("city-select");
+    if (!selectedCityKeyEle){
+      return;
+    }
+    if (!selectedCityKeyEle.value){
+      showError("Please select a city");
+      return;
+    }
+    hideError();
+    const cityKey = selectedCityKeyEle.value;
+    fetchWeatherForCity(cityKey);
 }
 
 document
@@ -264,12 +400,17 @@ document
 //     .addEventListener("click", fetchAllCities)
 
 function fetchAllCities() {
-  // your code here (same as fetch version)
+  // your code here
+  document.getElementById("weather-grid").innerHTML = "";
+  hideError();
+  showStatus("🌍 Fetching all cities...", "");
+
+  for (const citiesKeys of Object.keys(CITIES)){
+    fetchWeatherForCity(citiesKeys);
+  }
+ showStatus("✅ All cities loaded", "success")
 }
 
-document
-  .getElementById("fetch-all-btn")
-  .addEventListener("click", fetchAllCities);
 
 // ----------------------------------------------------------
 // TASK 8 — clear all (unchanged from fetch)
@@ -280,8 +421,14 @@ document
 //   - Reset #city-select to ""
 
 document.getElementById("clear-btn").addEventListener("click", function () {
-  // your code here (same as fetch version)
+  // your code here
+    getEl("weather-grid").innerHTML = "";
+    hideError();
+    hideStatus();
+    const citySelectField = document.getElementById("city-select");
+    citySelectField.value = "";
 });
+
 
 // ----------------------------------------------------------
 // ⭐ STRETCH GOAL — Promise.all with async/await
@@ -317,6 +464,33 @@ document.getElementById("clear-btn").addEventListener("click", function () {
 // Write a comment: does Promise.all itself know or care that
 // you're using axios instead of fetch?
 
-function fetchAllCitiesParallel() {
+async function fetchAllCitiesParallel() {
   // your code here
+   getEl("weather-grid").innerHTML = "";
+   showSpinner("Fetching all cities...");
+   const promises = Object.keys(CITIES).map(async function(key){
+      const data = await safeFetch(buildWeatherUrl(CITIES[key]));
+      return {key, data};
+   });
+
+   try{
+    const results = await Promise.all(promises);
+    results.forEach(function(result){
+      const city = CITIES[result.key];
+      const card = createWeatherCard(city.name, result.data);
+      getEl("weather-grid").appendChild(card);
+      showStatus("✅ All " + results.length + " cities loaded", "success")
+    });
+   }
+   catch(error){
+      showError("One or more cities failed: " + err.message);
+   }
+   finally{
+      hideSpinner();
+   }
 }
+
+
+document
+  .getElementById("fetch-all-btn")
+  .addEventListener("click", fetchAllCitiesParallel);
